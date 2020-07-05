@@ -34,6 +34,7 @@ const CreateTask = (props) => {
   const [timerId, updateTimerId] = useState(null);
   const [startTime, updateStartTime] = useState(getCurrentTime());
   const [endTime, updateEndTime] = useState(getCurrentTime());
+  const [tag, updateTag] = useState(null);
 
   // GraphQl
   const [createAtask, { data }] = useMutation(createOneTask);
@@ -116,7 +117,7 @@ const CreateTask = (props) => {
               onChange={(e) => updateTitle(e.target.value)}
             />
           </form>
-          <CreateTag />
+          <CreateTag updateTag={updateTag} />
           <button
             className="timer-button"
             onClick={() => (isTimerToggleStart ? stopTimer() : startTimer())}
