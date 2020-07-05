@@ -1,10 +1,11 @@
 import React, {useState} from "react";
+import CreateTask from "./CreateTask";
 
 const Home = (props) => {
   return (
     <main className="main-home">
       <div className="main-container">
-        // TODO: Add components
+        <CreateTask />
       </div>
     </main>
   )
