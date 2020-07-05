@@ -14,7 +14,7 @@ const GetTags = gql`
 }
 `;
 
-const CreateTag = (props) => {
+const CreateTag = ({ updateTag, currentTag }) => {
 	const [open, setOpen] = useState(false);
 	const { loading, error, data} = useQuery(GetTags);
 
@@ -27,8 +27,11 @@ const CreateTag = (props) => {
       	{open && <Modal open={open} setOpen={setOpen}/>}
       </div>
         <div className="create-tag-container">
-          <select className="tag-select-menu" name="tag-menu" onChange={() => console.log("click")}>
-          	<option className="create-tag" onClick={() => setOpen(!open)}>
+          <select className="tag-select-menu" name="tag-menu" onChange={(e) => console.log(e.target.value)}>
+          	{currentTag && <option className="default-tag">
+              {currentTag}
+            </option>}
+            <option className="create-tag" onClick={() => setOpen(!open)}>
           		+ Tag
           	</option>
           	{!loading && data.tags.map(tag => (
