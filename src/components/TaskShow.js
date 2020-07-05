@@ -5,9 +5,8 @@ import { MdDelete } from "react-icons/md";
 import CreateTag from "./CreateTag";
 
 const SimplifyTime = (date) => {
-	return date;
 	// TODO: fix this
-	// return `${date.toISOString().substring(0, 10)} ${date.toISOString().substring(11, 19)}`;
+	return new Date(date).toLocaleTimeString().substring(0, 10);
 } 
 
 const GetTasks = gql`
@@ -53,6 +52,10 @@ const TaskShow = () => {
     // TODO: add refresh function call here
   };
 
+  const updateTitle = (e) => {
+  	// 
+  } 
+
 	if (error) return `Error! ${error.message}`;
 
 	return (
@@ -63,7 +66,12 @@ const TaskShow = () => {
 						<li key={task.id} value={task.name}>
 							<div className="task-container">
 								<div className="task-input-container">
-									<input className="task-input" type="text" name="task-title" value={task.title} onChange={() => alert("Oh")} />
+									<input 
+										className="task-input" 
+										type="text" 
+										name="task-title" 
+										value={task.title} 
+										onChange={(e) => task.title += e.target.value} />
 								</div>
 								<div className="tag-container">
 									{/*TODO: Pass tag data to createTag component*/}
