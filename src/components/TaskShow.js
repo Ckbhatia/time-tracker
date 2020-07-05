@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import gql from "graphql-tag";
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/react-hooks';
 import { MdDelete } from "react-icons/md";
 import CreateTag from "./CreateTag";
 
@@ -26,9 +26,33 @@ const GetTasks = gql`
 }
 `;
 
+const deleteOneTask = gql`
+  mutation($id: Int!) {
+  delete_tasks(where: {id: {_eq: $id}}) {
+    returning {
+      id
+      title
+    }
+    affected_rows
+  }
+}
+`;
+
+
 const TaskShow = () => {
 	
 	const { loading, error, data} = useQuery(GetTasks);
+  const [deleteAtask] = useMutation(deleteOneTask);
+
+ const submitTaskData = (id) => {
+    deleteAtask({
+      variables: {
+        id
+      },
+    });
+    // TODO: add refresh function call here
+  };
+
 	if (error) return `Error! ${error.message}`;
 
 	return (
@@ -43,7 +67,7 @@ const TaskShow = () => {
 								</div>
 								<div className="tag-container">
 									{/*TODO: Pass tag data to createTag component*/}
-									<CreateTag />
+									<CreateTag currentTag={task.tags[0]}/>
 								</div>
 								<div className="task-timer-container">
 								{/*TODO: Simplify the date to only time, four digit*/}
@@ -51,7 +75,7 @@ const TaskShow = () => {
 									<span className="end-time">{SimplifyTime(task.end_time)}</span>
 								</div>
 								<div className="delete-btn-container">
-									<button className="delete-btn" onClick={() => alert("Ah, I will delete this for you.")}>
+									<button className="delete-btn" onClick={() => submitTaskData(task.id)}>
 										<MdDelete />
 									</button>
 								</div>
