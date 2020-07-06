@@ -5,8 +5,14 @@ import { MdDelete } from "react-icons/md";
 import CreateTag from "./CreateTag";
 
 const SimplifyTime = (date) => {
-	// TODO: fix this
-	return new Date(date).toLocaleTimeString().substring(0, 10);
+	if (date) {
+		let time = date.substring(11, 19);
+		let H = +time.substr(0, 2);
+		let h = H % 12 || 12;
+		let ampm = H < 12 || H === 24 ? "AM" : "PM";
+		time = h + time.substr(2, 3) + " " + ampm;
+		return time;
+	}
 };
 
 const GetTasks = gql`
