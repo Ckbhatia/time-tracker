@@ -60,7 +60,7 @@ const CreateTask = (props) => {
           title,
           start_time: startTime,
           end_time: endTime,
-          tag_id: tagId ? tagId : 0,
+          tag_id: tagId,
         },
       });
       // Reset
