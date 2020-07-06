@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import gql from "graphql-tag";
 import { useQuery, useMutation } from "@apollo/react-hooks";
 import { MdDelete } from "react-icons/md";
@@ -37,10 +37,32 @@ const deleteOneTask = gql`
 	}
 `;
 
+const updateOneTaskTag = gql`
+	mutation($task_id: Int!, $tag_id: Int!) {
+		update_task_tag(
+			where: { task_id: { _eq: $task_id } }
+			_set: { tag_id: $tag_id }
+		) {
+			returning {
+				task_id
+				task {
+					title
+				}
+				tag {
+					name
+				}
+			}
+			affected_rows
+		}
+	}
+`;
+
 const TaskShow = () => {
 	const { loading, error, data } = useQuery(GetTasks);
 	const [deleteAtask] = useMutation(deleteOneTask);
+	const [updateATaskTag] = useMutation(updateOneTaskTag);
 	const [tagId, updateTagId] = useState(null);
+	const [currentTaskId, updateCurrentTaskId] = useState(null);
 
 	const submitTaskData = (id) => {
 		deleteAtask({
@@ -51,8 +73,19 @@ const TaskShow = () => {
 		// TODO: add refresh function call here
 	};
 
+	const submitTaskTagData = (tagId) => {
+		if (tagId !== null) {
+			updateATaskTag({
+				variables: {
+					task_id: currentTaskId,
+					tag_id: tagId,
+				},
+			});
+		}
+	};
+
 	const updateTitle = (e) => {
-		//
+		// TODO: add update title functionality
 	};
 
 	if (error) return `Error! ${error.message}`;
@@ -63,8 +96,15 @@ const TaskShow = () => {
 				<ul className="list-container">
 					{!loading &&
 						data.tasks.map((task) => (
-							<li key={task.id} value={task.name}>
-								<div className="task-container">
+							<li key={task.id} value={task.name} data-id={task.id}>
+								<div
+									className="task-container"
+									onClick={(e) => {
+										updateCurrentTaskId(
+											Number(e.currentTarget.parentNode.dataset.id)
+										);
+									}}
+								>
 									<div className="task-input-container">
 										<input
 											className="task-input"
@@ -79,6 +119,7 @@ const TaskShow = () => {
 										<CreateTag
 											updateTagId={updateTagId}
 											currentTag={task.tags[0]}
+											submitTaskTagData={submitTaskTagData}
 										/>
 									</div>
 									<div className="task-timer-container">
