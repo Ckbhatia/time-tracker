@@ -14,7 +14,7 @@ const GetTags = gql`
   }
 `;
 
-const CreateTag = ({ updateTagId, currentTag }) => {
+const CreateTag = ({ updateTagId, currentTag, submitTaskTagData }) => {
   const [open, setOpen] = useState(false);
   const { loading, error, data } = useQuery(GetTags);
 
@@ -22,7 +22,11 @@ const CreateTag = ({ updateTagId, currentTag }) => {
     const tagName = e.target.value;
     if (tagName !== "__createNew") {
       const tagId = data.tags.filter((tag) => tag.name === tagName)[0].id;
-      updateTagId(tagId);
+      if (submitTaskTagData) {
+        submitTaskTagData(tagId);
+      } else {
+        updateTagId(tagId);
+      }
     }
   };
 
