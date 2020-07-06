@@ -148,11 +148,20 @@ input:checked + label:before {
   background: #666;
 }
 
+/* Time */
+.start-time {
+  margin-right: 8px;
+}
+
+.end-time {
+  margin-left: 8px;
+}
+
 /*Task delete-btn*/
 .delete-btn {
   background-color: transparent;
   border: none;
-  border-radius: 5px; 
+  border-radius: 5px;
   padding: 5px;
 }
 
