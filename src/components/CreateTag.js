@@ -14,9 +14,17 @@ const GetTags = gql`
   }
 `;
 
-const CreateTag = ({ updateTag, currentTag }) => {
+const CreateTag = ({ updateTagId, currentTag }) => {
   const [open, setOpen] = useState(false);
   const { loading, error, data } = useQuery(GetTags);
+
+  const handleChange = (e) => {
+    const tagName = e.target.value;
+    if (tagName !== "__createNew") {
+      const tagId = data.tags.filter((tag) => tag.name === tagName)[0].id;
+      updateTagId(tagId);
+    }
+  };
 
   if (error) return `Error! ${error.message}`;
 
@@ -28,14 +36,18 @@ const CreateTag = ({ updateTag, currentTag }) => {
           <select
             className="tag-select-menu"
             name="tag-menu"
-            onChange={(e) => updateTag(e.target.value)}
+            onChange={handleChange}
           >
             {currentTag && (
-              <option className="default-tag">
+              <option className="default-tag" value={currentTag.name}>
                 {currentTag && currentTag.name}
               </option>
             )}
-            <option className="create-tag" onClick={() => setOpen(!open)}>
+            <option
+              className="create-tag"
+              value={"__createNew"}
+              onClick={() => setOpen(!open)}
+            >
               + Tag
             </option>
             {!loading &&
