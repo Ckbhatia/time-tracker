@@ -33,7 +33,6 @@ const createOneTask = gql`
 `;
 
 const getCurrentTime = () => {
-  // return new Date().getHours() + ":" + new Date().getMinutes();
   return new Date().toLocaleString();
 };
 
@@ -43,13 +42,12 @@ const CreateTask = (props) => {
   const [timer, updateTimer] = useState("0:00:00");
   const [timerId, updateTimerId] = useState(null);
   const [startTime, updateStartTime] = useState(getCurrentTime());
-  const [endTime, updateEndTime] = useState(getCurrentTime());
   const [tagId, updateTagId] = useState(null);
 
   // GraphQl
   const [createAtask, { data }] = useMutation(createOneTask);
 
-  const submitTaskData = () => {
+  const submitTaskData = (startTime, endTime) => {
     if (!tagId) {
       // TODO: Style this { low priority }
       alert("Please select a tag");
@@ -105,9 +103,8 @@ const CreateTask = (props) => {
     // Toggle timer flag to false
     changeTimerToggle(false);
 
-    // TODO: solve time issue, null in first attempt
-    await updateEndTime(getCurrentTime());
-    submitTaskData();
+    const endTime = getCurrentTime();
+    submitTaskData(startTime, endTime);
 
     // Reset timer
     updateTimer("0:00:00");
