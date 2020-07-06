@@ -8,16 +8,26 @@ const createOneTask = gql`
   mutation(
     $title: String!
     $start_time: timestamptz!
-    $end_time: timestamptz!
+    $end_time: timestamptz
+    $tag_id: Int!
   ) {
     insert_tasks_one(
-      object: { title: $title, start_time: $start_time, end_time: $end_time }
+      object: {
+        title: $title
+        start_time: $start_time
+        end_time: $end_time
+        task_tags: { data: { tag_id: $tag_id } }
+      }
     ) {
       title
       id
       created_at
       start_time
       end_time
+      tags {
+        name
+        id
+      }
     }
   }
 `;
@@ -34,21 +44,30 @@ const CreateTask = (props) => {
   const [timerId, updateTimerId] = useState(null);
   const [startTime, updateStartTime] = useState(getCurrentTime());
   const [endTime, updateEndTime] = useState(getCurrentTime());
-  const [tag, updateTag] = useState(null);
+  const [tagId, updateTagId] = useState(null);
 
   // GraphQl
   const [createAtask, { data }] = useMutation(createOneTask);
 
   const submitTaskData = () => {
-    createAtask({
-      variables: {
-        title,
-        start_time: startTime,
-        end_time: endTime,
-      },
-    });
-    // Reset
-    updateTitle("");
+    if (!tagId) {
+      // TODO: Style this { low priority }
+      alert("Please select a tag");
+    } else if (!title) {
+      // TODO: Style this { low priority }
+      alert("Please type title");
+    } else {
+      createAtask({
+        variables: {
+          title,
+          start_time: startTime,
+          end_time: endTime,
+          tag_id: tagId ? tagId : 0,
+        },
+      });
+      // Reset
+      updateTitle("");
+    }
   };
 
   const startTimer = () => {
@@ -114,10 +133,11 @@ const CreateTask = (props) => {
               name="title"
               placeholder="type task title"
               value={title}
+              required
               onChange={(e) => updateTitle(e.target.value)}
             />
           </form>
-          <CreateTag updateTag={updateTag} />
+          <CreateTag updateTagId={updateTagId} />
           <button
             className="timer-button"
             onClick={() => (isTimerToggleStart ? stopTimer() : startTimer())}
@@ -125,9 +145,7 @@ const CreateTask = (props) => {
             {isTimerToggleStart ? <AiTwotoneStop /> : <AiFillPlayCircle />}
           </button>
           <div className="timer-container">
-            <span className="timer">
-              {timer}
-            </span>
+            <span className="timer">{timer}</span>
           </div>
         </div>
       </div>
