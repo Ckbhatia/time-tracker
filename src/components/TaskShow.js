@@ -40,7 +40,7 @@ const deleteOneTask = gql`
 const TaskShow = () => {
 	const { loading, error, data } = useQuery(GetTasks);
 	const [deleteAtask] = useMutation(deleteOneTask);
-	const [tag, updateTag] = useState(null);
+	const [tagId, updateTagId] = useState(null);
 
 	const submitTaskData = (id) => {
 		deleteAtask({
@@ -77,7 +77,7 @@ const TaskShow = () => {
 									<div className="tag-container">
 										{/*TODO: Pass tag data to createTag component*/}
 										<CreateTag
-											updateTag={updateTag}
+											updateTagId={updateTagId}
 											currentTag={task.tags[0]}
 										/>
 									</div>
