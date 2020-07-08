@@ -133,9 +133,6 @@ const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
 	return (
 		<div className="task-list-main-container">
 			<div className="task-list-container">
-				<button className="refetch-btn" onClick={() => refetch()}>
-					Fetch
-				</button>
 				<ul className="list-container">
 					{!loading &&
 						data.tasks.map((task) => (
