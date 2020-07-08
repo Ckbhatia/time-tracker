@@ -36,7 +36,7 @@ const getCurrentTime = () => {
   return new Date().toLocaleString();
 };
 
-const CreateTask = (props) => {
+const CreateTask = ({ udpateShouldRefetch }) => {
   const [title, updateTitle] = useState("");
   const [isTimerToggleStart, changeTimerToggle] = useState(false);
   const [timer, updateTimer] = useState("0:00:00");
@@ -45,9 +45,12 @@ const CreateTask = (props) => {
   const [tagId, updateTagId] = useState(null);
 
   // GraphQl
-  const [createAtask, { data }] = useMutation(createOneTask);
+  const [
+    createAtask,
+    { data, loading: createTaskLoading, error: createTaskError },
+  ] = useMutation(createOneTask);
 
-  const submitTaskData = (startTime, endTime) => {
+  const submitTaskData = async (startTime, endTime) => {
     if (!tagId) {
       // TODO: Style this { low priority }
       alert("Please select a tag");
@@ -55,7 +58,7 @@ const CreateTask = (props) => {
       // TODO: Style this { low priority }
       alert("Please type title");
     } else {
-      createAtask({
+      await createAtask({
         variables: {
           title,
           start_time: startTime,
@@ -63,6 +66,10 @@ const CreateTask = (props) => {
           tag_id: tagId,
         },
       });
+      // Check if loading is over and there's no error
+      if (!createTaskLoading && !createTaskError) {
+        udpateShouldRefetch(true);
+      }
       // Reset
       updateTitle("");
     }
@@ -130,7 +137,6 @@ const CreateTask = (props) => {
               name="title"
               placeholder="type task title"
               value={title}
-              required
               onChange={(e) => updateTitle(e.target.value)}
             />
           </form>
