@@ -1,9 +1,13 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import gql from "graphql-tag";
 import { useQuery, useMutation } from "@apollo/react-hooks";
 import { MdDelete } from "react-icons/md";
 import CreateTag from "./CreateTag";
 
+/* Simplifies the date to AM/PM time only
+ *	param {object}
+ *	return {string}
+ */
 const SimplifyTime = (date) => {
 	if (date) {
 		let time = date.substring(11, 19);
@@ -15,6 +19,7 @@ const SimplifyTime = (date) => {
 	}
 };
 
+// Graphql queries
 const GetTasks = gql`
 	query {
 		tasks(limit: 10) {
@@ -64,19 +69,28 @@ const updateOneTaskTag = gql`
 `;
 
 const TaskShow = () => {
-	const { loading, error, data } = useQuery(GetTasks);
-	const [deleteAtask] = useMutation(deleteOneTask);
-	const [updateATaskTag] = useMutation(updateOneTaskTag);
+	const { loading, error, data, refetch } = useQuery(GetTasks);
+	const [
+		deleteAtask,
+		{ loading: delMutLoading, error: delMutError },
+	] = useMutation(deleteOneTask);
+	const [
+		updateATaskTag,
+		{ loading: updateMutLoading, error: updateMutError },
+	] = useMutation(updateOneTaskTag);
 	const [tagId, updateTagId] = useState(null);
 	const [currentTaskId, updateCurrentTaskId] = useState(null);
 
-	const submitTaskData = (id) => {
-		deleteAtask({
+	const submitTaskData = async (id) => {
+		await deleteAtask({
 			variables: {
 				id,
 			},
 		});
-		// TODO: add refresh function call here
+		// Fetch data again after delete action done
+		if (!delMutLoading) {
+			refetch();
+		}
 	};
 
 	const submitTaskTagData = (tagId) => {
@@ -94,11 +108,19 @@ const TaskShow = () => {
 		// TODO: add update title functionality
 	};
 
+	// 	Possible errors
 	if (error) return `Error! ${error.message}`;
+
+	if (delMutError) return `Error! couldn't delete the task. Please refresh.`;
+
+	if (updateMutError) return `Error! couldn't update the tag. Please refresh.`;
 
 	return (
 		<div className="task-list-main-container">
 			<div className="task-list-container">
+				<button className="refetch-btn" onClick={() => refetch()}>
+					Fetch
+				</button>
 				<ul className="list-container">
 					{!loading &&
 						data.tasks.map((task) => (
