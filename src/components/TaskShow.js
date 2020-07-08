@@ -68,18 +68,33 @@ const updateOneTaskTag = gql`
 	}
 `;
 
-const TaskShow = () => {
-	const { loading, error, data, refetch } = useQuery(GetTasks);
+const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
+	const { loading, error, data, refetch, networkStatus } = useQuery(GetTasks, {
+		notifyOnNetworkStatusChange: true,
+	});
+
 	const [
 		deleteAtask,
 		{ loading: delMutLoading, error: delMutError },
 	] = useMutation(deleteOneTask);
+
 	const [
 		updateATaskTag,
 		{ loading: updateMutLoading, error: updateMutError },
 	] = useMutation(updateOneTaskTag);
+
 	const [tagId, updateTagId] = useState(null);
 	const [currentTaskId, updateCurrentTaskId] = useState(null);
+
+	useEffect(() => {
+		// Check if refetch is requested
+		if (shouldRefetch) {
+			(async () => {
+				await refetch();
+				udpateShouldRefetch(false);
+			})();
+		}
+	}, [shouldRefetch]);
 
 	const submitTaskData = async (id) => {
 		await deleteAtask({
