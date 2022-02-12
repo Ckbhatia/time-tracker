@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { ApolloProvider } from "@apollo/react-hooks";
 import "./index.css";
+import GlobalStyles from './styles/GlobalStyles'
 import App from "./App";
 import client from "./utils/client";
 import * as serviceWorker from "./serviceWorker";
@@ -9,6 +10,7 @@ import * as serviceWorker from "./serviceWorker";
 ReactDOM.render(
   <React.StrictMode>
     <ApolloProvider client={client}>
+      <GlobalStyles />
       <App />
     </ApolloProvider>
   </React.StrictMode>,
