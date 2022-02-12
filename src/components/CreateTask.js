@@ -123,32 +123,38 @@ const CreateTask = ({ udpateShouldRefetch }) => {
     <main className="main-create-task">
       <div className="main-container">
         <div className="task-container">
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              if (!isTimerToggleStart) {
-                startTimer();
-              }
-            }}
-          >
-            <input
-              type="text"
-              className="text"
-              name="title"
-              placeholder="type task title"
-              value={title}
-              onChange={(e) => updateTitle(e.target.value)}
-            />
-          </form>
-          <CreateTag updateTagId={updateTagId} />
-          <button
-            className="timer-button"
-            onClick={() => (isTimerToggleStart ? stopTimer() : startTimer())}
-          >
-            {isTimerToggleStart ? <AiTwotoneStop /> : <AiFillPlayCircle />}
-          </button>
-          <div className="timer-container">
-            <span className="timer">{timer}</span>
+          <div className="task-form-container">
+            <form
+              className="task-form"
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (!isTimerToggleStart) {
+                  startTimer();
+                }
+              }}
+            >
+              <input
+                type="text"
+                className="task_input"
+                name="title"
+                placeholder="What are you working on?"
+                value={title}
+                onChange={(e) => updateTitle(e.target.value)}
+              />
+            </form>
+          </div>
+
+          <div className="task-action-container">
+            <CreateTag updateTagId={updateTagId} />
+            <button
+              className="timer-button"
+              onClick={() => (isTimerToggleStart ? stopTimer() : startTimer())}
+              >
+              {isTimerToggleStart ? <AiTwotoneStop /> : <AiFillPlayCircle />}
+            </button>
+            <div className="timer-container">
+              <span className="timer">{timer}</span>
+            </div>
           </div>
         </div>
       </div>

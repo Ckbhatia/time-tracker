@@ -33,8 +33,7 @@ const CreateTag = ({ updateTagId, currentTag, submitTaskTagData }) => {
   if (error) return `Error! ${error.message}`;
 
   return (
-    <main className="main-create-tag">
-      <div className="main-container">
+    <div className="main-create-tag">
         <div>{open && <Modal open={open} setOpen={setOpen} />}</div>
         <div className="create-tag-container">
           <select
@@ -61,9 +60,8 @@ const CreateTag = ({ updateTagId, currentTag, submitTaskTagData }) => {
                 </option>
               ))}
           </select>
-        </div>
       </div>
-    </main>
+    </div>
   );
 };
 
