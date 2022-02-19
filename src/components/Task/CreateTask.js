@@ -1,48 +1,44 @@
 import React, { useState } from "react";
 import gql from "graphql-tag";
 import { useMutation } from "@apollo/react-hooks";
-import CreateTag from "./CreateTag";
+import CreateTag from "../Tag/CreateTag";
 import { AiFillPlayCircle, AiTwotoneStop } from "react-icons/ai";
+import { getCurrentTime } from "../../utils/dateTime";
+import { StyledCreateTaskInput, StyledTaskContainer } from "./Styles";
 
+// TODO: author id should be added to the graphql query
 const createOneTask = gql`
   mutation(
     $title: String!
     $start_time: timestamptz!
     $end_time: timestamptz
-    $tag_id: Int!
+    $tag_id: Int
   ) {
     insert_tasks_one(
       object: {
         title: $title
         start_time: $start_time
         end_time: $end_time
-        task_tags: { data: { tag_id: $tag_id } }
+        tag_id: $tag_id
       }
-    ) {
-      title
-      id
-      created_at
-      start_time
-      end_time
-      tags {
-        name
+      ) {
+        title
         id
+        created_at
+        start_time
+        end_time
+        tag_id
       }
     }
-  }
-`;
-
-const getCurrentTime = () => {
-  return new Date().toLocaleString();
-};
+    `;
 
 const CreateTask = ({ udpateShouldRefetch }) => {
-  const [title, updateTitle] = useState("");
-  const [isTimerToggleStart, changeTimerToggle] = useState(false);
-  const [timer, updateTimer] = useState("0:00:00");
-  const [timerId, updateTimerId] = useState(null);
-  const [startTime, updateStartTime] = useState(getCurrentTime());
-  const [tagId, updateTagId] = useState(null);
+  const [title, setTitle] = useState("");
+  const [isTimerToggleStart, setTimerToggle] = useState(false);
+  const [timer, setTimer] = useState("0:00:00");
+  const [timerId, setTimerId] = useState(null);
+  const [startTime, setStartTime] = useState(() => getCurrentTime());
+  const [tagId, setTagId] = useState(null);
 
   // GraphQl
   const [
@@ -71,23 +67,23 @@ const CreateTask = ({ udpateShouldRefetch }) => {
         udpateShouldRefetch(true);
       }
       // Reset
-      updateTitle("");
+      setTitle("");
     }
   };
 
   const startTimer = () => {
     // Toggle timer flag to true
-    changeTimerToggle(true);
+    setTimerToggle(true);
 
     // updateStartTime
-    updateStartTime(getCurrentTime());
+    setStartTime(getCurrentTime());
 
     let sec = 0;
     let min = 0;
     let hr = 0;
 
     const intervalId = setInterval(() => {
-      updateTimer(
+      setTimer(
         `${hr}:${min < 10 ? "0" + min : min}:${sec < 10 ? "0" + sec : sec}`
       );
       sec++;
@@ -103,18 +99,18 @@ const CreateTask = ({ udpateShouldRefetch }) => {
     }, 1000);
 
     // Update timer
-    updateTimerId(intervalId);
+    setTimerId(intervalId);
   };
 
   const stopTimer = async () => {
     // Toggle timer flag to false
-    changeTimerToggle(false);
+    setTimerToggle(false);
 
     const endTime = getCurrentTime();
     submitTaskData(startTime, endTime);
 
     // Reset timer
-    updateTimer("0:00:00");
+    setTimer("0:00:00");
 
     clearInterval(timerId);
   };
@@ -122,7 +118,7 @@ const CreateTask = ({ udpateShouldRefetch }) => {
   return (
     <main className="main-create-task">
       <div className="main-container">
-        <div className="task-container">
+        <StyledTaskContainer>
           <div className="task-form-container">
             <form
               className="task-form"
@@ -133,19 +129,19 @@ const CreateTask = ({ udpateShouldRefetch }) => {
                 }
               }}
             >
-              <input
+              <StyledCreateTaskInput
                 type="text"
                 className="task_input"
                 name="title"
                 placeholder="What are you working on?"
                 value={title}
-                onChange={(e) => updateTitle(e.target.value)}
+                onChange={(e) => setTitle(e.target.value)}
               />
             </form>
           </div>
 
           <div className="task-action-container">
-            <CreateTag updateTagId={updateTagId} />
+            <CreateTag updateTagId={setTagId} />
             <button
               className="timer-button"
               onClick={() => (isTimerToggleStart ? stopTimer() : startTimer())}
@@ -156,7 +152,7 @@ const CreateTask = ({ udpateShouldRefetch }) => {
               <span className="timer">{timer}</span>
             </div>
           </div>
-        </div>
+        </StyledTaskContainer>
       </div>
     </main>
   );
