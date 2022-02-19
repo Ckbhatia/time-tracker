@@ -2,22 +2,9 @@ import React, { useState, useEffect } from "react";
 import gql from "graphql-tag";
 import { useQuery, useMutation } from "@apollo/react-hooks";
 import { MdDelete } from "react-icons/md";
-import CreateTag from "./CreateTag";
-
-/* Simplifies the date to AM/PM time only
- *	param {object}
- *	return {string}
- */
-const SimplifyTime = (date) => {
-	if (date) {
-		let time = date.substring(11, 19);
-		let H = +time.substr(0, 2);
-		let h = H % 12 || 12;
-		let ampm = H < 12 || H === 24 ? "AM" : "PM";
-		time = h + time.substr(2, 3) + " " + ampm;
-		return time;
-	}
-};
+import CreateTag from "../Tag/CreateTag";
+import { SimplifyTime, getDurationTime } from "../../utils/dateTime";
+import { StyledButtonContainer, StyledListContainer, StyledMainContainer, StyledTagContainer, StyledTaskContainer, StyledTaskInputContainer, StyledTimeContainer, StyledTimeDifferenceContainer } from "./Styles";
 
 // Graphql queries
 const GetTasks = gql`
@@ -28,13 +15,10 @@ const GetTasks = gql`
 			created_at
 			start_time
 			end_time
-			tags {
-				name
-				id
-			}
+			tag_id
 		}
 	}
-`;
+	`;
 
 const deleteOneTask = gql`
 	mutation($id: Int!) {
@@ -131,60 +115,63 @@ const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
 	if (updateMutError) return `Error! couldn't update the tag. Please refresh.`;
 
 	return (
-		<div className="task-list-main-container">
+		<StyledMainContainer >
 			<div className="task-list-container">
-				<ul className="list-container">
+				<StyledListContainer className="list-container">
 					{!loading &&
-						data.tasks.map((task) => (
+						data.tasks.map((task) => {
+						const { hours, minutes, seconds } = getDurationTime(task.start_time, task.end_time);
+						return (
 							<li key={task.id} value={task.name} data-id={task.id}>
-								<div
-									className="task-container"
+								<StyledTaskContainer
 									onClick={(e) => {
 										updateCurrentTaskId(
 											Number(e.currentTarget.parentNode.dataset.id)
 										);
 									}}
 								>
-									<div className="task-input-container">
+									<StyledTaskInputContainer className="task-input-container">
 										<input
-											className="task-input"
 											type="text"
 											name="task-title"
 											value={task.title}
 											onChange={(e) => (task.title += e.target.value)}
 										/>
-									</div>
-									<div className="tag-container">
+									</StyledTaskInputContainer>
+									<StyledTagContainer>
 										{/*TODO: Pass tag data to createTag component*/}
 										<CreateTag
 											updateTagId={updateTagId}
-											currentTag={task.tags[0]}
+											currentTag={task?.tag_id}
 											submitTaskTagData={submitTaskTagData}
 										/>
-									</div>
-									<div className="task-timer-container">
-										{/*TODO: Simplify the date to only time, four digit*/}
+									</StyledTagContainer>
+									<StyledTimeContainer className="task-timer-container">
 										<span className="start-time">
 											{SimplifyTime(task.start_time)}
 										</span>
 										<span className="end-time">
 											{SimplifyTime(task.end_time)}
 										</span>
-									</div>
-									<div className="delete-btn-container">
+									</StyledTimeContainer>
+									<StyledTimeDifferenceContainer>
+										{hours}:{minutes}:{seconds}
+									</StyledTimeDifferenceContainer>
+									<StyledButtonContainer>
 										<button
-											className="delete-btn"
 											onClick={() => submitTaskData(task.id)}
 										>
 											<MdDelete />
 										</button>
-									</div>
-								</div>
+									</StyledButtonContainer>
+								</StyledTaskContainer>
 							</li>
-						))}
-				</ul>
+						)})}
+				</StyledListContainer>
 			</div>
-		</div>
+		</StyledMainContainer>
 	);
 };
 export default TaskShow;
+
+
