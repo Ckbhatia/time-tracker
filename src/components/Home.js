@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import CreateTask from "./CreateTask";
-import TaskShow from "./TaskShow";
+import CreateTask from "./Task/CreateTask";
+import TaskShow from "./TaskList/TaskShow";
 
 const Home = (props) => {
 	const [shouldRefetch, udpateShouldRefetch] = useState(false);
