@@ -1,3 +1,9 @@
+:root {
+  --main-dark-cyan: #1d272b;
+  --seren-setting: #c5d2d9;
+  --black-pearl: #12191d;
+}
+
 .App {
   text-align: center;
 }
