@@ -4,7 +4,7 @@ import { useMutation } from "@apollo/react-hooks";
 import CreateTag from "../Tag/CreateTag";
 import { AiFillPlayCircle, AiTwotoneStop } from "react-icons/ai";
 import { getCurrentTime } from "../../utils/dateTime";
-import { StyledCreateTaskInput, StyledTaskContainer } from "./Styles";
+import { StyledCreateTaskInput, StyledMainTaskContainer, StyledTaskContainer } from "./Styles";
 
 // TODO: author id should be added to the graphql query
 const createOneTask = gql`
@@ -35,7 +35,7 @@ const createOneTask = gql`
 const CreateTask = ({ udpateShouldRefetch }) => {
   const [title, setTitle] = useState("");
   const [isTimerToggleStart, setTimerToggle] = useState(false);
-  const [timer, setTimer] = useState("0:00:00");
+  const [timer, setTimer] = useState("00:00:00");
   const [timerId, setTimerId] = useState(null);
   const [startTime, setStartTime] = useState(() => getCurrentTime());
   const [tagId, setTagId] = useState(null);
@@ -84,7 +84,7 @@ const CreateTask = ({ udpateShouldRefetch }) => {
 
     const intervalId = setInterval(() => {
       setTimer(
-        `${hr}:${min < 10 ? "0" + min : min}:${sec < 10 ? "0" + sec : sec}`
+        `${hr < 10 ? "0" + hr : hr}:${min < 10 ? "0" + min : min}:${sec < 10 ? "0" + sec : sec}`
       );
       sec++;
       if (sec > 59) {
@@ -110,23 +110,25 @@ const CreateTask = ({ udpateShouldRefetch }) => {
     submitTaskData(startTime, endTime);
 
     // Reset timer
-    setTimer("0:00:00");
+    setTimer("00:00:00");
 
     clearInterval(timerId);
   };
 
+  const handleClick = () => {
+    isTimerToggleStart ? stopTimer() : startTimer()
+  }
+
   return (
     <main className="main-create-task">
-      <div className="main-container">
+      <StyledMainTaskContainer>
         <StyledTaskContainer>
           <div className="task-form-container">
             <form
               className="task-form"
               onSubmit={(e) => {
                 e.preventDefault();
-                if (!isTimerToggleStart) {
-                  startTimer();
-                }
+                handleClick();
               }}
             >
               <StyledCreateTaskInput
@@ -144,7 +146,7 @@ const CreateTask = ({ udpateShouldRefetch }) => {
             <CreateTag updateTagId={setTagId} />
             <button
               className="timer-button"
-              onClick={() => (isTimerToggleStart ? stopTimer() : startTimer())}
+              onClick={handleClick}
               >
               {isTimerToggleStart ? <AiTwotoneStop /> : <AiFillPlayCircle />}
             </button>
@@ -153,7 +155,7 @@ const CreateTask = ({ udpateShouldRefetch }) => {
             </div>
           </div>
         </StyledTaskContainer>
-      </div>
+      </StyledMainTaskContainer>
     </main>
   );
 };

@@ -7,10 +7,22 @@ export const StyledMainContainer = styled.div`
 export const StyledListContainer = styled.ul`
   list-style: none;
   border: 1px solid black;
+  margin-bottom: 15px;
+  position: relative;
+`;
+
+export const StyledHeaderContainer = styled.div`
+${tw`flex flex-col items-center px-4 py-3`};
+  background-color: var(--black-pearl);
+`;
+
+export const StyledDateTime = styled.span`
+${tw`self-start text-sm font-normal`};
+  color: var(--seren-setting);
 `;
 
 export const StyledTaskContainer = styled.div`
-  ${tw`flex content-start items-center border-b-2 border-black p-3.5 w-full`};
+  ${tw`flex content-start items-center border-b-2 border-black p-2.5 w-full`};
   background-color: var(--main-dark-cyan);
   transition: all .2s ease-in-out;
 
