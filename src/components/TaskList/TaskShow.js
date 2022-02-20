@@ -1,59 +1,15 @@
 import React, { useState, useEffect } from "react";
-import gql from "graphql-tag";
 import { useQuery, useMutation } from "@apollo/react-hooks";
 import { MdDelete } from "react-icons/md";
 import CreateTag from "../Tag/CreateTag";
 import { SimplifyTime, getDurationTime } from "../../utils/dateTime";
 import { StyledButtonContainer, StyledDateTime, StyledHeaderContainer, StyledListContainer, StyledMainContainer, StyledTagContainer, StyledTaskContainer, StyledTaskInputContainer, StyledTimeContainer, StyledTimeDifferenceContainer } from "./Styles";
 import { tasksByTime } from "../../utils/task";
-
-// Graphql queries
-const GetTasks = gql`
-	query {
-		tasks(limit: 10, order_by: { start_time: desc }) {
-			title
-			id
-			created_at
-			start_time
-			end_time
-			tag_id
-		}
-	}
-	`;
-
-const deleteOneTask = gql`
-	mutation($id: Int!) {
-		delete_tasks(where: { id: { _eq: $id } }) {
-			returning {
-				id
-				title
-			}
-			affected_rows
-		}
-	}
-`;
-
-const updateOneTaskTag = gql`
-	mutation($task_id: Int!, $tag_id: Int!) {
-		update_task_tag(
-			where: { task_id: { _eq: $task_id } }
-			_set: { tag_id: $tag_id }
-		) {
-			returning {
-				task_id
-				task {
-					title
-				}
-				tag {
-					name
-				}
-			}
-			affected_rows
-		}
-	}
-`;
+import { deleteOneTask, GetTasks, updateOneTaskTag, updateTaskTitle } from "../../service"
 
 const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
+	const [editTaskInfo, setEditTaskInfo] = useState();
+
 	const { loading, error, data, refetch, networkStatus } = useQuery(GetTasks, {
 		notifyOnNetworkStatusChange: true,
 	});
@@ -67,6 +23,11 @@ const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
 		updateATaskTag,
 		{ loading: updateMutLoading, error: updateMutError },
 	] = useMutation(updateOneTaskTag);
+
+	const [
+		updateATaskTitle,
+		{ loading: updateTaskMutLoading, error: updateTaskMutError },
+	] = useMutation(updateTaskTitle);
 
 	const [tagId, updateTagId] = useState(null);
 	const [currentTaskId, updateCurrentTaskId] = useState(null);
@@ -104,9 +65,13 @@ const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
 		}
 	};
 
-	const updateTitle = (e) => {
-		// TODO: add update title functionality
-	};
+	const handleChange = (e, taskId) => {
+		if (e.target.name && !editTaskInfo) {
+			setEditTaskInfo({fieldName: e.target.name, id: taskId, value: e.target.value});
+		} else if(e.target.name === editTaskInfo?.fieldName) {
+			setEditTaskInfo({...editTaskInfo, value: e.target.value});
+		}
+	}
 
 	// 	Possible errors
 	if (error) return `Error! ${error.message}`;
@@ -116,6 +81,28 @@ const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
 	if (updateMutError) return `Error! couldn't update the tag. Please refresh.`;
 
 	const tasks = tasksByTime(data);
+
+	const getTaskInputValue = (task) => {
+		if(editTaskInfo) {
+			if(editTaskInfo.fieldName === `task-title-${task.id}`) {
+				return editTaskInfo.value;
+			}
+		}
+	  return task.title;
+	}
+
+	const handleBlur = async () => {
+		if(editTaskInfo) {
+			await updateATaskTitle({
+				variables: {
+					id: editTaskInfo.id,
+					title: editTaskInfo.value,
+				},
+			});
+	
+			setEditTaskInfo(null)
+		}
+	}
 
 	return (
 		<StyledMainContainer >
@@ -143,9 +130,10 @@ const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
 											<StyledTaskInputContainer className="task-input-container">
 												<input
 													type="text"
-													name="task-title"
-													value={task.title}
-													onChange={(e) => (task.title += e.target.value)}
+													name={`task-title-${task.id}`}
+													value={getTaskInputValue(task)}
+													onBlur={handleBlur}
+													onChange={(e) => handleChange(e, task?.id)}
 												/>
 											</StyledTaskInputContainer>
 											<StyledTagContainer>
