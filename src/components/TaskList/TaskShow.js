@@ -4,12 +4,13 @@ import { useQuery, useMutation } from "@apollo/react-hooks";
 import { MdDelete } from "react-icons/md";
 import CreateTag from "../Tag/CreateTag";
 import { SimplifyTime, getDurationTime } from "../../utils/dateTime";
-import { StyledButtonContainer, StyledListContainer, StyledMainContainer, StyledTagContainer, StyledTaskContainer, StyledTaskInputContainer, StyledTimeContainer, StyledTimeDifferenceContainer } from "./Styles";
+import { StyledButtonContainer, StyledDateTime, StyledHeaderContainer, StyledListContainer, StyledMainContainer, StyledTagContainer, StyledTaskContainer, StyledTaskInputContainer, StyledTimeContainer, StyledTimeDifferenceContainer } from "./Styles";
+import { tasksByTime } from "../../utils/task";
 
 // Graphql queries
 const GetTasks = gql`
 	query {
-		tasks(limit: 10) {
+		tasks(limit: 10, order_by: { start_time: desc }) {
 			title
 			id
 			created_at
@@ -114,60 +115,74 @@ const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
 
 	if (updateMutError) return `Error! couldn't update the tag. Please refresh.`;
 
+	const tasks = tasksByTime(data);
+
 	return (
 		<StyledMainContainer >
 			<div className="task-list-container">
-				<StyledListContainer className="list-container">
-					{!loading &&
-						data.tasks.map((task) => {
-						const { hours, minutes, seconds } = getDurationTime(task.start_time, task.end_time);
+				{!loading && data?.tasks?.length ?
+					Object.keys(tasks)?.map((date) => {
 						return (
-							<li key={task.id} value={task.name} data-id={task.id}>
-								<StyledTaskContainer
-									onClick={(e) => {
-										updateCurrentTaskId(
-											Number(e.currentTarget.parentNode.dataset.id)
-										);
-									}}
-								>
-									<StyledTaskInputContainer className="task-input-container">
-										<input
-											type="text"
-											name="task-title"
-											value={task.title}
-											onChange={(e) => (task.title += e.target.value)}
-										/>
-									</StyledTaskInputContainer>
-									<StyledTagContainer>
-										{/*TODO: Pass tag data to createTag component*/}
-										<CreateTag
-											updateTagId={updateTagId}
-											currentTag={task?.tag_id}
-											submitTaskTagData={submitTaskTagData}
-										/>
-									</StyledTagContainer>
-									<StyledTimeContainer className="task-timer-container">
-										<span className="start-time">
-											{SimplifyTime(task.start_time)}
-										</span>
-										<span className="end-time">
-											{SimplifyTime(task.end_time)}
-										</span>
-									</StyledTimeContainer>
-									<StyledTimeDifferenceContainer>
-										{hours}:{minutes}:{seconds}
-									</StyledTimeDifferenceContainer>
-									<StyledButtonContainer>
-										<button
-											onClick={() => submitTaskData(task.id)}
+						<StyledListContainer key={date}>
+							<StyledHeaderContainer>
+								<StyledDateTime>
+								{date}
+								</StyledDateTime>
+							</StyledHeaderContainer>
+							{tasks[date].map((task) => {
+								const { hours, minutes, seconds } = getDurationTime(task.start_time, task.end_time);
+								return (
+									<li key={task.id} value={task.name} data-id={task.id}>
+										<StyledTaskContainer
+											onClick={(e) => {
+												updateCurrentTaskId(
+													Number(e.currentTarget.parentNode.dataset.id)
+												);
+											}}
 										>
-											<MdDelete />
-										</button>
-									</StyledButtonContainer>
-								</StyledTaskContainer>
-							</li>
-						)})}
-				</StyledListContainer>
+											<StyledTaskInputContainer className="task-input-container">
+												<input
+													type="text"
+													name="task-title"
+													value={task.title}
+													onChange={(e) => (task.title += e.target.value)}
+												/>
+											</StyledTaskInputContainer>
+											<StyledTagContainer>
+												<CreateTag
+													updateTagId={updateTagId}
+													currentTag={task?.tag_id}
+													submitTaskTagData={submitTaskTagData}
+												/>
+											</StyledTagContainer>
+											<StyledTimeContainer className="task-timer-container">
+												<span className="start-time">
+													{SimplifyTime(task.start_time)}
+												</span>
+												<span className="end-time">
+													{SimplifyTime(task.end_time)}
+												</span>
+											</StyledTimeContainer>
+											<StyledTimeDifferenceContainer>
+												{hours}:{minutes}:{seconds}
+											</StyledTimeDifferenceContainer>
+											<StyledButtonContainer>
+												<button
+													onClick={() => submitTaskData(task.id)}
+												>
+													<MdDelete />
+												</button>
+											</StyledButtonContainer>
+										</StyledTaskContainer>
+									</li>
+										)
+									}
+								)
+							}
+						</StyledListContainer>
+						)})
+					: null
+			}		
 			</div>
 		</StyledMainContainer>
 	);

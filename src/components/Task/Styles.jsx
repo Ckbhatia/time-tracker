@@ -1,9 +1,14 @@
 import tw, { styled } from "twin.macro";
 
+export const StyledMainTaskContainer = styled.div`
+  padding: 10px 15px;
+  background-color: #253237;
+`;
+
 export const StyledTaskContainer = styled.div`
   border: 1px solid black;
   background-color: var(--main-dark-cyan);
-  ${tw`flex flex-row flex-wrap content-center p-2`};
+  ${tw`flex flex-row flex-wrap content-center p-2 w-full`};
 `;
 
 export const StyledCreateTaskInput = styled.input`
