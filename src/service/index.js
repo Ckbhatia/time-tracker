@@ -28,23 +28,12 @@ export const deleteOneTask = gql`
 `;
 
 export const updateOneTaskTag = gql`
-	mutation($task_id: Int!, $tag_id: Int!) {
-		update_task_tag(
-			where: { task_id: { _eq: $task_id } }
-			_set: { tag_id: $tag_id }
-		) {
-			returning {
-				task_id
-				task {
-					title
-				}
-				tag {
-					name
-				}
-			}
-			affected_rows
-		}
-	}
+mutation($task_id: Int!, $tag_id: Int!) {
+	update_tasks_by_pk(pk_columns: {id: $task_id}, _set: {tag_id: $tag_id}) {
+    id
+    tag_id
+  }
+}
 `;
 
 export const updateTaskTitle = gql`
