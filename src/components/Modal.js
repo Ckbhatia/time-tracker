@@ -30,11 +30,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function SimpleModal(props) {
-  const { open, setOpen } = props;
-
-  const classes = useStyles();
-  // getModalStyle is not a pure function, we roll the style only on the first render
-  const [modalStyle] = React.useState(getModalStyle);
+  const { open, setOpen, refetch } = props;
 
   const handleClose = () => {
     setOpen(false);
@@ -48,7 +44,7 @@ export default function SimpleModal(props) {
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description"
       >
-        <TagForm open={open} setOpen={setOpen} />
+        <TagForm open={open} setOpen={setOpen} refetch={refetch} />
       </Modal>
     </div>
   );

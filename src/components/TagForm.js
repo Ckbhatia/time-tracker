@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import gql from "graphql-tag";
 import { useMutation } from "@apollo/react-hooks";
 import { makeStyles } from "@material-ui/core/styles";
+import { StyledButton, StyledHeading, StyledInput } from "./TagForm.styles";
+import { createOneTag } from "../service";
 
 function rand() {
   return Math.round(Math.random() * 20) - 10;
@@ -22,37 +23,31 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     position: "absolute",
     width: 400,
-    backgroundColor: theme.palette.background.paper,
+    backgroundColor: '#13191b',
     border: "2px solid #000",
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
+    color: '#c5d2d9'
   },
 }));
 
-// Graphql mutation
-const createOneTag = gql`
-  mutation($name: String!) {
-    insert_tags_one(object: { name: $name }) {
-      id
-      name
-    }
-  }
-`;
 
-const TagForm = ({ open, setOpen }) => {
+const TagForm = ({ open, setOpen, refetch }) => {
   const [modalStyle] = useState(getModalStyle);
   const classes = useStyles();
 
   const [inputValue, updateInputValue] = useState("");
 
-  const [createATag, { data }] = useMutation(createOneTag);
+  const [createATag ] = useMutation(createOneTag);
 
-  const submitTagData = () => {
-    createATag({
+  const submitTagData = async () => {
+    await createATag({
       variables: {
-        name: inputValue,
+        title: inputValue,
       },
     });
+    // Refetch after
+    refetch();
     // Reset
     updateInputValue("");
     // Set modal
@@ -61,17 +56,17 @@ const TagForm = ({ open, setOpen }) => {
 
   return (
     <div style={modalStyle} className={classes.paper}>
-      <h2 id="simple-modal-title">Create new Tag</h2>
-      <input
-        className="tag-input"
+      <StyledHeading>Create tag</StyledHeading>
+      <StyledInput
         name="create-tag"
         type="text"
         value={inputValue}
+        placeholder="Tag title"
         onChange={(e) => updateInputValue(e.target.value)}
       />
-      <button className="create-btn" onClick={() => submitTagData()}>
+      <StyledButton className="create-btn" onClick={() => submitTagData()}>
         Create
-      </button>
+      </StyledButton>
     </div>
   );
 };

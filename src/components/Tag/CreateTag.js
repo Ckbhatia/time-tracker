@@ -1,12 +1,10 @@
 import React, { useState } from "react";
 import gql from "graphql-tag";
 import { useQuery } from "@apollo/react-hooks";
-// import { AiFillPlayCircle, AiTwotoneStop } from "react-icons/ai";
-// import { GoPlus } from "react-icons/go";
 import Modal from "../Modal";
 import { StyledMainTagContainer, StyledSelect } from "./Styled";
 
-// Add user id to fetch user specific tags only
+// TODO: Add user id to fetch user specific tags only
 const GetTags = gql`
   query {
     tags(order_by: { created_at: desc }) {
@@ -18,7 +16,7 @@ const GetTags = gql`
 
 const CreateTag = ({ updateTagId, currentTag, submitTaskTagData }) => {
   const [open, setOpen] = useState(false);
-  const { loading, error, data } = useQuery(GetTags);
+  const { loading, error, data, refetch } = useQuery(GetTags);
 
   const handleChange = (e) => {
     const tagName = e.target.value;
@@ -30,6 +28,9 @@ const CreateTag = ({ updateTagId, currentTag, submitTaskTagData }) => {
       } else {
         updateTagId(tagId);
       }
+    }
+    else if(tagName === "__createNew") {
+      setOpen(true);
     }
   };
 
@@ -44,20 +45,25 @@ const CreateTag = ({ updateTagId, currentTag, submitTaskTagData }) => {
 
   return (
     <StyledMainTagContainer>
-        <div>{open && <Modal open={open} setOpen={setOpen} />}</div>
         <div className="create-tag-container">
           <StyledSelect
             className="tag-select-menu"
             name="tag-menu"
             onChange={handleChange}
             value={getTagValue(currentTag)}
+            defaultValue="default"
           >
+             <option
+              disabled
+              value="default"
+            >
+              Select tag
+            </option>
             <option
               className="create-tag"
               value={"__createNew"}
-              onClick={() => setOpen(!open)}
             >
-              + Tag
+              Create +
             </option>
             {!loading &&
               data.tags.map((tag) => (
@@ -67,6 +73,7 @@ const CreateTag = ({ updateTagId, currentTag, submitTaskTagData }) => {
               ))}
           </StyledSelect>
       </div>
+      {open && <Modal open={open} setOpen={setOpen} refetch={refetch} />}
     </StyledMainTagContainer>
   );
 };

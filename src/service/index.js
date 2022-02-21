@@ -44,3 +44,13 @@ export const updateTaskTitle = gql`
     }
   }
 `;
+
+// Tag 
+export const createOneTag = gql`
+  mutation($title: String!) {
+    insert_tags_one(object: { title: $title }) {
+      id
+      title
+    }
+  }
+`;
