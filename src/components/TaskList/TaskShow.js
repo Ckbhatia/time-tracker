@@ -3,7 +3,7 @@ import { useQuery, useMutation } from "@apollo/react-hooks";
 import { MdDelete } from "react-icons/md";
 import CreateTag from "../Tag/CreateTag";
 import { SimplifyTime, getDurationTime } from "../../utils/dateTime";
-import { StyledButtonContainer, StyledDateTime, StyledHeaderContainer, StyledListContainer, StyledMainContainer, StyledTagContainer, StyledTaskContainer, StyledTaskInputContainer, StyledTimeContainer, StyledTimeDifferenceContainer } from "./Styles";
+import { StyledButtonContainer, StyledDateTime, StyledExtraInfoContainer, StyledHeaderContainer, StyledListContainer, StyledMainContainer, StyledTagContainer, StyledTaskContainer, StyledTaskInputContainer, StyledTaskMainInfoContainer, StyledTimeContainer, StyledTimeDifferenceContainer } from "./Styles";
 import { tasksByTime } from "../../utils/task";
 import { deleteOneTask, GetTasks, updateOneTaskTag, updateTaskTitle } from "../../service"
 
@@ -127,40 +127,44 @@ const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
 												);
 											}}
 										>
-											<StyledTaskInputContainer className="task-input-container">
-												<input
-													type="text"
-													name={`task-title-${task.id}`}
-													value={getTaskInputValue(task)}
-													onBlur={handleBlur}
-													onChange={(e) => handleChange(e, task?.id)}
-												/>
-											</StyledTaskInputContainer>
-											<StyledTagContainer>
-												<CreateTag
-													updateTagId={updateTagId}
-													currentTag={task?.tag_id}
-													submitTaskTagData={submitTaskTagData}
-												/>
-											</StyledTagContainer>
-											<StyledTimeContainer className="task-timer-container">
-												<span className="start-time">
-													{SimplifyTime(task.start_time)}
-												</span>
-												<span className="end-time">
-													{SimplifyTime(task.end_time)}
-												</span>
-											</StyledTimeContainer>
-											<StyledTimeDifferenceContainer>
-												{hours}:{minutes}:{seconds}
-											</StyledTimeDifferenceContainer>
-											<StyledButtonContainer>
-												<button
-													onClick={() => submitTaskData(task.id)}
-												>
-													<MdDelete />
-												</button>
-											</StyledButtonContainer>
+											<StyledTaskMainInfoContainer>
+												<StyledTaskInputContainer className="task-input-container">
+													<input
+														type="text"
+														name={`task-title-${task.id}`}
+														value={getTaskInputValue(task)}
+														onBlur={handleBlur}
+														onChange={(e) => handleChange(e, task?.id)}
+													/>
+												</StyledTaskInputContainer>
+												<StyledTagContainer>
+													<CreateTag
+														updateTagId={updateTagId}
+														currentTag={task?.tag_id}
+														submitTaskTagData={submitTaskTagData}
+													/>
+												</StyledTagContainer>
+											</StyledTaskMainInfoContainer>
+											<StyledExtraInfoContainer>
+												<StyledTimeContainer className="task-timer-container">
+													<span className="start-time">
+														{SimplifyTime(task.start_time)}
+													</span>
+													<span className="end-time">
+														{SimplifyTime(task.end_time)}
+													</span>
+												</StyledTimeContainer>
+												<StyledTimeDifferenceContainer>
+													{hours}:{minutes}:{seconds}
+												</StyledTimeDifferenceContainer>
+												<StyledButtonContainer>
+													<button
+														onClick={() => submitTaskData(task.id)}
+													>
+														<MdDelete />
+													</button>
+												</StyledButtonContainer>
+											</StyledExtraInfoContainer>
 										</StyledTaskContainer>
 									</li>
 										)

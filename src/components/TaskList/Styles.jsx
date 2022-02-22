@@ -35,9 +35,34 @@ export const StyledTaskContainer = styled.div`
   }
 `;
 
-export const StyledTaskInputContainer = styled.div`
-  width: 50%;
+export const StyledTaskMainInfoContainer = styled.div`
+  width: 55%;
+  @media (max-width: 767px) {
+    width: 100%;
+  }
+  @media (max-width: 600px) {
+    flex-direction: column;
+  }
+  ${tw`flex flex-row`};
+`;
+export const StyledExtraInfoContainer = styled.div`
+  width: 45%;
 
+  @media (max-width: 767px) {
+    width: 100%;
+  }
+  @media (max-width: 600px) {
+    padding: 6px 0;
+  }
+  ${tw`flex flex-row items-center`};
+`;
+
+export const StyledTaskInputContainer = styled.div`
+  width: 80%;
+
+  @media (max-width: 1425px) {
+    width: 65%;
+  }
   ${tw`flex flex-col`};
 
   input {
@@ -55,21 +80,68 @@ export const StyledTaskInputContainer = styled.div`
 
 export const StyledTagContainer = styled.div`
   width: 10%;
+  @media (max-width: 767px) {
+    width: 35%;
+  }
+  @media (max-width: 600px) {
+    align-self: flex-start;
+    width: unset;
+  }
 `;
 
 export const StyledTimeContainer = styled.div`
-  width: 15%;
+  width: 45%;
   color: var(--seren-setting);
+
+  span {
+    ${tw`text-xs sm:text-sm`};
+  }
+
+  @media (max-width: 1425px) {
+    width: 65%;
+  }
+
+  @media (max-width: 1125px) {
+    width: 75%;
+  }
+
+  @media (max-width: 767px) {
+    width: 35%;
+  }
+
+  @media (max-width: 614px) {
+    width: 45%;
+  }
+
+  @media (max-width: 525px) {
+    width: 55%;
+  }
+
+  @media (max-width: 360px) {
+    width: 70%;
+  }
+
 `;
 
 export const StyledTimeDifferenceContainer = styled.span`
-  width: 5%;
+  width: 15%;
+  ${tw`text-xs sm:text-sm`};
+
+  @media (max-width: 614px) {
+    width: 25%;
+  }
+
   display: inline-block;
   color: var(--seren-setting);
 `;
 
 export const StyledButtonContainer = styled.div`
-  width: 5%;  
+  width: 10%;
+
+  @media (min-width: 600px) and (max-width: 767px) {
+    width: 15%;
+  }
+
   button {
     background-color: transparent;
     color: var(--seren-setting);
