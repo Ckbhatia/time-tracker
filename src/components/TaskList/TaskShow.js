@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@apollo/react-hooks";
+import get from "lodash/get";
 import { MdDelete } from "react-icons/md";
 import CreateTag from "../Tag/CreateTag";
 import { SimplifyTime, getDurationTime } from "../../utils/dateTime";
-import { StyledButtonContainer, StyledDateTime, StyledExtraInfoContainer, StyledHeaderContainer, StyledListContainer, StyledMainContainer, StyledTagContainer, StyledTaskContainer, StyledTaskInputContainer, StyledTaskMainInfoContainer, StyledTimeContainer, StyledTimeDifferenceContainer } from "./Styles";
+import { StyledButtonContainer, StyledDateTime, StyledExtraInfoContainer, StyledHeaderContainer, StyledListContainer, StyledMainContainer, StyledTagContainer, StyledTaskContainer, StyledTaskInputContainer, StyledTaskMainInfoContainer, StyledTimeContainer, StyledTimeDifferenceContainer, StyledTotalTimeContainer } from "./Styles";
 import { tasksByTime } from "../../utils/task";
 import { deleteOneTask, GetTasks, updateOneTaskTag, updateTaskTitle } from "../../service"
 
@@ -109,14 +110,25 @@ const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
 			<div className="task-list-container">
 				{!loading && data?.tasks?.length ?
 					Object.keys(tasks)?.map((date) => {
+						const totalHours = get(tasks, `[${date}].totalTime.totalHours`, 0);
+						const totalMinutes = get(tasks, `[${date}].totalTime.totalMinutes`, 0);
+						const totalSeconds = get(tasks, `[${date}].totalTime.totalSeconds`, 0);
 						return (
 						<StyledListContainer key={date}>
 							<StyledHeaderContainer>
 								<StyledDateTime>
-								{date}
+									{date}
 								</StyledDateTime>
+								<StyledTotalTimeContainer>
+								<span>
+									Total:
+								</span>
+								<span>
+									{`${totalHours}:${totalMinutes}:${totalSeconds}`}
+								</span>
+								</StyledTotalTimeContainer>
 							</StyledHeaderContainer>
-							{tasks[date].map((task) => {
+							{tasks[date]?.tasks?.map((task) => {
 								const { hours, minutes, seconds } = getDurationTime(task.start_time, task.end_time);
 								return (
 									<li key={task.id} value={task.name} data-id={task.id}>

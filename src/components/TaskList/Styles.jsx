@@ -12,13 +12,27 @@ export const StyledListContainer = styled.ul`
 `;
 
 export const StyledHeaderContainer = styled.div`
-${tw`flex flex-col items-center px-4 py-3`};
+${tw`flex flex-row justify-between items-center px-4 py-3`};
   background-color: var(--black-pearl);
 `;
 
 export const StyledDateTime = styled.span`
 ${tw`self-start text-sm font-normal`};
   color: var(--seren-setting);
+`;
+
+export const StyledTotalTimeContainer = styled.div`
+  ${tw`self-start`};
+  color: var(--seren-setting);
+
+  span {
+    ${tw`text-sm font-normal`}; 
+  }
+
+  span:nth-child(2) {
+    margin-left: 8px;
+    ${tw`text-base font-medium`};
+  }
 `;
 
 export const StyledTaskContainer = styled.div`
@@ -45,6 +59,7 @@ export const StyledTaskMainInfoContainer = styled.div`
   }
   ${tw`flex flex-row`};
 `;
+
 export const StyledExtraInfoContainer = styled.div`
   width: 45%;
 
