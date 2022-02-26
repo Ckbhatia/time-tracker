@@ -1,36 +1,11 @@
 import React, { useState } from "react";
-import gql from "graphql-tag";
 import { useMutation } from "@apollo/react-hooks";
 import CreateTag from "../Tag/CreateTag";
 import { AiFillPlayCircle, AiTwotoneStop } from "react-icons/ai";
 import { getCurrentTime } from "../../utils/dateTime";
 import { StyledCreateTaskInput, StyledMainTaskContainer, StyledTaskContainer } from "./Styles";
-
-// TODO: author id should be added to the graphql query
-const createOneTask = gql`
-  mutation(
-    $title: String!
-    $start_time: timestamptz!
-    $end_time: timestamptz
-    $tag_id: Int
-  ) {
-    insert_tasks_one(
-      object: {
-        title: $title
-        start_time: $start_time
-        end_time: $end_time
-        tag_id: $tag_id
-      }
-      ) {
-        title
-        id
-        created_at
-        start_time
-        end_time
-        tag_id
-      }
-    }
-    `;
+import { createOneTask } from "../../service";
+import { getUserId } from "../../utils/storage";
 
 const CreateTask = ({ udpateShouldRefetch }) => {
   const [title, setTitle] = useState("");
@@ -43,7 +18,7 @@ const CreateTask = ({ udpateShouldRefetch }) => {
   // GraphQl
   const [
     createAtask,
-    { data, loading: createTaskLoading, error: createTaskError },
+    { loading: createTaskLoading, error: createTaskError },
   ] = useMutation(createOneTask);
 
   const submitTaskData = async (startTime, endTime) => {
@@ -60,6 +35,7 @@ const CreateTask = ({ udpateShouldRefetch }) => {
           start_time: startTime,
           end_time: endTime,
           tag_id: tagId,
+          author_id: getUserId()
         },
       });
       // Check if loading is over and there's no error

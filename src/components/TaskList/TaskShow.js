@@ -28,6 +28,7 @@ import {
 } from "../../service";
 import Pagination from "../Pagination";
 import { DEFAULT_LIMIT } from "../../constants";
+import { getUserId } from "../../utils/storage";
 
 const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
   const [editTaskInfo, setEditTaskInfo] = useState();
@@ -38,7 +39,8 @@ const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
     notifyOnNetworkStatusChange: true,
     variables: {
       limit: DEFAULT_LIMIT,
-      offset
+      offset,
+      author_id: getUserId(),
     }
   });
 

@@ -3,6 +3,7 @@ import { useMutation } from "@apollo/react-hooks";
 import { makeStyles } from "@material-ui/core/styles";
 import { StyledButton, StyledHeading, StyledInput } from "./TagForm.styles";
 import { createOneTag } from "../service";
+import { getUserId } from "../utils/storage";
 
 function rand() {
   return Math.round(Math.random() * 20) - 10;
@@ -44,6 +45,7 @@ const TagForm = ({ open, setOpen, refetch }) => {
     await createATag({
       variables: {
         title: inputValue,
+        author_id: getUserId()
       },
     });
     // Refetch after

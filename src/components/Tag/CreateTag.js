@@ -1,22 +1,18 @@
 import React, { useState } from "react";
-import gql from "graphql-tag";
 import { useQuery } from "@apollo/react-hooks";
 import Modal from "../Modal";
 import { StyledMainTagContainer, StyledSelect } from "./Styled";
-
-// TODO: Add user id to fetch user specific tags only
-const GetTags = gql`
-  query {
-    tags(order_by: { created_at: desc }) {
-      id
-      title
-    }
-  }
-`;
+import { GetTags } from "../../service";
+import { getUserId } from "../../utils/storage";
 
 const CreateTag = ({ updateTagId, currentTag, submitTaskTagData }) => {
   const [open, setOpen] = useState(false);
-  const { loading, error, data, refetch } = useQuery(GetTags);
+  const { loading, error, data, refetch } = useQuery(GetTags, {
+    variables: {
+      author_id: getUserId(),
+    }
+  }
+);
 
   const handleChange = (e) => {
     const tagName = e.target.value;
