@@ -3,17 +3,21 @@ import gql from "graphql-tag";
 
 // Graphql queries
 export const GetTasks = gql`
-	query {
-		tasks(limit: 10, order_by: { start_time: desc }) {
-			title
-			id
-			created_at
-			start_time
-			end_time
-			tag_id
+query ($limit: Int!,  $offset: Int!) {
+	tasks_aggregate{
+		aggregate {
+			totalCount: count(columns: title)
 		}
 	}
-	`;
+	tasks(limit: $limit, offset: $offset, order_by: {start_time: desc}) {
+		title
+		id
+		created_at
+		start_time
+		end_time
+		tag_id
+	}
+}`;
 
 export const deleteOneTask = gql`
 	mutation($id: Int!) {
