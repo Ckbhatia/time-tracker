@@ -1,8 +1,7 @@
 import ApolloClient from "apollo-boost";
-import { gql } from "apollo-boost";
 
 const client = new ApolloClient({
-  uri: "https://test-323.herokuapp.com/v1/graphql",
+  uri: process.env.REACT_APP_BE_URI,
   headers: {
     Authorization: `Bearer ${process.env.REACT_APP_AUTH_TOKEN}`,
   },
