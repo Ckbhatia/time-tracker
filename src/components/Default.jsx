@@ -1,7 +1,9 @@
 import React from "react";
+import { AuthContext } from "../Context/AuthContext";
 import useAuthHook from "../Hooks/authHook";
 
-const Default = ({ setIsAuthenticated }) => {
+const Default = () => {
+  const { setIsAuthenticated } = React.useContext(AuthContext);
   const auth = useAuthHook();
 
   React.useEffect(() => {
