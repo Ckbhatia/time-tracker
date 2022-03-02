@@ -28,19 +28,21 @@ import {
 } from "../../service";
 import Pagination from "../Pagination";
 import { DEFAULT_LIMIT } from "../../constants";
-import { getUserId } from "../../utils/storage";
+import { AuthContext } from "../../Context/AuthContext";
 
 const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
   const [editTaskInfo, setEditTaskInfo] = useState();
   const [offset, setOffset] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
 
+  const { userInfo } = React.useContext(AuthContext);
+
   const { loading, error, data, refetch, networkStatus } = useQuery(GetTasks, {
     notifyOnNetworkStatusChange: true,
     variables: {
       limit: DEFAULT_LIMIT,
       offset,
-      author_id: getUserId(),
+      author_id: userInfo?.userId,
     }
   });
 

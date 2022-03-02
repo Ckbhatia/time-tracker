@@ -5,7 +5,7 @@ import { AiFillPlayCircle, AiTwotoneStop } from "react-icons/ai";
 import { getCurrentTime } from "../../utils/dateTime";
 import { StyledCreateTaskInput, StyledMainTaskContainer, StyledTaskContainer } from "./Styles";
 import { createOneTask } from "../../service";
-import { getUserId } from "../../utils/storage";
+import { AuthContext } from "../../Context/AuthContext";
 
 const CreateTask = ({ udpateShouldRefetch }) => {
   const [title, setTitle] = useState("");
@@ -14,6 +14,8 @@ const CreateTask = ({ udpateShouldRefetch }) => {
   const [timerId, setTimerId] = useState(null);
   const [startTime, setStartTime] = useState(() => getCurrentTime());
   const [tagId, setTagId] = useState(null);
+
+  const { userInfo } = React.useContext(AuthContext);
 
   // GraphQl
   const [
@@ -35,7 +37,7 @@ const CreateTask = ({ udpateShouldRefetch }) => {
           start_time: startTime,
           end_time: endTime,
           tag_id: tagId,
-          author_id: getUserId()
+          author_id: userInfo?.userId,
         },
       });
       // Check if loading is over and there's no error

@@ -3,7 +3,7 @@ import { useMutation } from "@apollo/react-hooks";
 import { makeStyles } from "@material-ui/core/styles";
 import { StyledButton, StyledHeading, StyledInput } from "./TagForm.styles";
 import { createOneTag } from "../service";
-import { getUserId } from "../utils/storage";
+import { AuthContext } from "../Context/AuthContext";
 
 function rand() {
   return Math.round(Math.random() * 20) - 10;
@@ -38,6 +38,7 @@ const TagForm = ({ open, setOpen, refetch }) => {
   const classes = useStyles();
 
   const [inputValue, updateInputValue] = useState("");
+  const { userInfo } = React.useContext(AuthContext);
 
   const [createATag ] = useMutation(createOneTag);
 
@@ -45,7 +46,7 @@ const TagForm = ({ open, setOpen, refetch }) => {
     await createATag({
       variables: {
         title: inputValue,
-        author_id: getUserId()
+        author_id: userInfo?.userId,
       },
     });
     // Refetch after

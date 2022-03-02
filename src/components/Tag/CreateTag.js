@@ -3,13 +3,15 @@ import { useQuery } from "@apollo/react-hooks";
 import Modal from "../Modal";
 import { StyledMainTagContainer, StyledSelect } from "./Styled";
 import { GetTags } from "../../service";
-import { getUserId } from "../../utils/storage";
+import { AuthContext } from "../../Context/AuthContext";
 
 const CreateTag = ({ updateTagId, currentTag, submitTaskTagData }) => {
   const [open, setOpen] = useState(false);
+  const { userInfo } = React.useContext(AuthContext);
+
   const { loading, error, data, refetch } = useQuery(GetTags, {
     variables: {
-      author_id: getUserId(),
+      author_id: userInfo?.userId,
     }
   }
 );
