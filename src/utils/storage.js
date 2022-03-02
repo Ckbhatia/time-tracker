@@ -1,10 +1,10 @@
 import get from "lodash/get";
+import { USER_INFO_TEXT } from "../constants";
 
-export const getUserId = () => {
-  // return localStorage.getItem('userId');
-  // Get and return original id of user
-  return 3;
-}
+
+export const getUserInfo = async () => {
+  return await JSON.parse(localStorage.getItem(USER_INFO_TEXT));
+};
 
 export const getAuthToken = async () => {
   const userInfo = await JSON.parse(localStorage.getItem('userInfo'));
