@@ -13,6 +13,8 @@ import {
   StyledSubmit,
 } from "./Styles";
 import { routes } from "../../constants/routes";
+import { saveInfo } from "../../utils/storage";
+import { USER_INFO_TEXT } from "../../constants";
 
 const Register = () => {
   const [formData, setFormData] = React.useState({
@@ -28,8 +30,9 @@ const Register = () => {
   React.useEffect(() => {
     if (data) {
       const token = data?.signup?.token;
+      const userId = data?.login?.id;
       if(token) {
-        localStorage.setItem("userInfo", JSON.stringify({token}));
+        saveInfo(USER_INFO_TEXT, {token, userId});
         navigate(routes.tracker)
       }
     }
