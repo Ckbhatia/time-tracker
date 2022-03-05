@@ -4,6 +4,8 @@ import Modal from "../Modal";
 import { StyledMainTagContainer, StyledSelect } from "./Styled";
 import { GetTags } from "../../service";
 import { AuthContext } from "../../Context/AuthContext";
+import { CREATE_NEW_TEXT, ERROR_MESSAGE, ERROR_TEXT } from "../../constants";
+import tost from "../../utils/toast";
 
 const CreateTag = ({ updateTagId, currentTag, submitTaskTagData }) => {
   const [open, setOpen] = useState(false);
@@ -17,9 +19,9 @@ const CreateTag = ({ updateTagId, currentTag, submitTaskTagData }) => {
 );
 
   const handleChange = (e) => {
-    const tagName = e.target.value;
-    if (tagName !== "__createNew") {
-      const tag = data.tags.find((tag) => tag.title === tagName)
+    const tagName = e?.target?.value;
+    if (tagName !== CREATE_NEW_TEXT) {
+      const tag = data?.tags?.find((tag) => tag.title === tagName)
       const tagId = tag?.id;
       if (submitTaskTagData) {
         submitTaskTagData(tagId);
@@ -27,12 +29,14 @@ const CreateTag = ({ updateTagId, currentTag, submitTaskTagData }) => {
         updateTagId(tagId);
       }
     }
-    else if(tagName === "__createNew") {
+    else if(tagName === CREATE_NEW_TEXT) {
       setOpen(true);
     }
   };
 
-  if (error) return `Error! ${error.message}`;
+  if (error) {
+    tost(ERROR_TEXT, ERROR_MESSAGE);
+  }
 
   const getTagValue = (tagId) => {
     if(data && tagId) {
@@ -59,7 +63,7 @@ const CreateTag = ({ updateTagId, currentTag, submitTaskTagData }) => {
             </option>
             <option
               className="create-tag"
-              value={"__createNew"}
+              value={CREATE_NEW_TEXT}
             >
               Create +
             </option>

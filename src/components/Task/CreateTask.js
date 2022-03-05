@@ -6,6 +6,8 @@ import { getCurrentTime } from "../../utils/dateTime";
 import { StyledCreateTaskInput, StyledMainTaskContainer, StyledTaskContainer } from "./Styles";
 import { createOneTask } from "../../service";
 import { AuthContext } from "../../Context/AuthContext";
+import tost from "../../utils/toast";
+import { ERROR_TEXT } from "../../constants";
 
 const CreateTask = ({ udpateShouldRefetch }) => {
   const [title, setTitle] = useState("");
@@ -25,11 +27,11 @@ const CreateTask = ({ udpateShouldRefetch }) => {
 
   const submitTaskData = async (startTime, endTime) => {
     if (!tagId) {
-      // TODO: Style this { low priority }
-      alert("Please select a tag");
+      tost(ERROR_TEXT, "Please select a tag");
+      return;
     } else if (!title) {
-      // TODO: Style this { low priority }
-      alert("Please type title");
+      tost(ERROR_TEXT, "Please type a title");
+      return;
     } else {
       await createAtask({
         variables: {

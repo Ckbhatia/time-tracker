@@ -14,7 +14,8 @@ import {
 } from "./Styles";
 import { routes } from "../../constants/routes";
 import { saveInfo } from "../../utils/storage";
-import { USER_INFO_TEXT } from "../../constants";
+import { ERROR_TEXT, USER_INFO_TEXT } from "../../constants";
+import tost from "../../utils/toast";
 
 const Register = () => {
   const [formData, setFormData] = React.useState({
@@ -25,7 +26,11 @@ const Register = () => {
   });
   const navigate = useNavigate();
 
-  const [registerUser, { data, loading, error }] = useMutation(register);
+  const [registerUser, { data, error }] = useMutation(register);
+
+  if (error) {
+    tost(ERROR_TEXT, "Something is wrong, please try again!");
+  }
 
   React.useEffect(() => {
     if (data) {

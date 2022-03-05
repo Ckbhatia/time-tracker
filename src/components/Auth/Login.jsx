@@ -13,8 +13,9 @@ import {
   StyledSubmit,
 } from "./Styles";
 import { routes } from "../../constants/routes";
-import { USER_INFO_TEXT } from "../../constants";
+import { USER_INFO_TEXT, ERROR_TEXT } from "../../constants";
 import { saveInfo } from "../../utils/storage";
+import tost from "../../utils/toast";
 
 const Login = () => {
   const [formData, setFormData] = React.useState({
@@ -26,9 +27,13 @@ const Login = () => {
   
   const [
     loginUser,
-    { data, loading, error },
+    { data, error },
   ] = useMutation(login);
-  
+
+  if (error) {
+    tost(ERROR_TEXT, "Something is wrong, please try again!");
+  }
+
   React.useEffect(() => {
     if (data) {
       const token = data?.login?.token;

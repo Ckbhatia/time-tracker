@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@apollo/react-hooks";
 import get from "lodash/get";
 import { MdDelete } from "react-icons/md";
+import tost from "../../utils/toast"
 import CreateTag from "../Tag/CreateTag";
 import { SimplifyTime, getDurationTime } from "../../utils/dateTime";
 import {
@@ -27,7 +28,7 @@ import {
   updateTaskTitle,
 } from "../../service";
 import Pagination from "../Pagination";
-import { DEFAULT_LIMIT } from "../../constants";
+import { DEFAULT_LIMIT, ERROR_MESSAGE, ERROR_TEXT } from "../../constants";
 import { AuthContext } from "../../Context/AuthContext";
 
 const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
@@ -43,11 +44,11 @@ const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
       limit: DEFAULT_LIMIT,
       offset,
       author_id: userInfo?.userId,
-    }
+    },
   });
 
   React.useEffect(() => {
-    if(data) {
+    if (data) {
       const aggregate = data?.tasks_aggregate?.aggregate;
       setTotalItems(aggregate?.totalCount);
     }
@@ -60,12 +61,12 @@ const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
 
   const [
     updateATaskTag,
-    { loading: updateMutLoading, error: updateMutError },
+    { error: updateMutError },
   ] = useMutation(updateOneTaskTag);
 
   const [
     updateATaskTitle,
-    { loading: updateTaskMutLoading, error: updateTaskMutError },
+    { error: updateTaskMutError },
   ] = useMutation(updateTaskTitle);
 
   const [tagId, updateTagId] = useState(null);
@@ -116,12 +117,26 @@ const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
     }
   };
 
-  // 	Possible errors
-  if (error) return `Error! ${error.message}`;
+  if(networkStatus) {
+    tost('loading', networkStatus);
+  }
 
-  if (delMutError) return `Error! couldn't delete the task. Please refresh.`;
+  if (error) {
+    tost(ERROR_TEXT, ERROR_MESSAGE);
+  }
 
-  if (updateMutError) return `Error! couldn't update the tag. Please refresh.`;
+  if (delMutError) {
+    tost(ERROR_TEXT, "Error! couldn't delete the task. Please retry.");
+  }
+
+  if (updateMutError) {
+    tost(ERROR_TEXT, "Error! couldn't update the tag. Please retry.");
+  }
+
+  if (updateTaskMutError) {
+    tost(ERROR_TEXT, "Error! couldn't update the title. Please retry.");
+  }
+  
 
   const tasks = tasksByTime(data);
 
@@ -148,14 +163,14 @@ const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
   };
 
   const handleNext = () => {
-    if(offset + DEFAULT_LIMIT <= totalItems) {
-      setOffset((offset) => offset + DEFAULT_LIMIT)
+    if (offset + DEFAULT_LIMIT <= totalItems) {
+      setOffset((offset) => offset + DEFAULT_LIMIT);
     }
   };
 
   const handlePrev = () => {
     // if(offset - DEFAULT_LIMIT >= DEFAULT_LIMIT) {
-    setOffset(() => offset - DEFAULT_LIMIT)
+    setOffset(() => offset - DEFAULT_LIMIT);
     // }
   };
 
