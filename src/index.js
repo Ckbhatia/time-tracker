@@ -1,7 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { ToastContainer } from "react-toastify";
 import "./index.css";
 import GlobalStyles from './styles/GlobalStyles'
+import 'react-toastify/dist/ReactToastify.css';
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 
@@ -9,6 +11,7 @@ ReactDOM.render(
   <React.StrictMode>
       <GlobalStyles />
       <App />
+      <ToastContainer />
   </React.StrictMode>,
   document.getElementById("root")
 );
