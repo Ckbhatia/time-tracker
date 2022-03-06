@@ -117,10 +117,6 @@ const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
     }
   };
 
-  if(networkStatus) {
-    tost('loading', networkStatus);
-  }
-
   if (error) {
     tost(ERROR_TEXT, ERROR_MESSAGE);
   }
