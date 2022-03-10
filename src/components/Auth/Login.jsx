@@ -1,8 +1,10 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@apollo/react-hooks";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import { login } from "../../service";
 import {
+  StyledButtonContainer,
   StyledContainer,
   StyledExtraActionContainer,
   StyledFormContainer,
@@ -27,7 +29,7 @@ const Login = () => {
   
   const [
     loginUser,
-    { data, error },
+    { data, loading, error },
   ] = useMutation(login);
 
   if (error) {
@@ -90,7 +92,13 @@ const Login = () => {
             />
           </StyledInputContainer>
           <StyledInputContainer>
-            <StyledSubmit disabled={isEmpty} type="submit" value="Sign In" />
+            {!loading ?
+              <StyledSubmit disabled={isEmpty} type="submit" value="Sign In" />
+            :
+            <StyledButtonContainer>
+              <CircularProgress />
+            </StyledButtonContainer>
+            }
           </StyledInputContainer>
         </StyledFormContainer>
         <StyledExtraActionContainer>

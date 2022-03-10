@@ -53,12 +53,22 @@ export const StyledSubmit = styled.input`
   &:hover { 
     background-color: #253235;
   }
-
+  
   &:disabled { 
-    cursor: default;
+    cursor: not-allowed;
     background-color: #414e53;
   }
-`
+`;
+
+export const StyledButtonContainer = styled.div`
+  ${tw`w-full 
+    border border-gray-700
+  `}
+  padding-top: 2px;
+  background-color: var(--main-dark-cyan);
+  text-align: center;
+  height: 50px;
+`;
 
 export const StyledExtraActionContainer = styled.div`
   text-align: center;

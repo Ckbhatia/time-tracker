@@ -1,8 +1,10 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@apollo/react-hooks";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import { register } from "../../service";
 import {
+  StyledButtonContainer,
   StyledContainer,
   StyledExtraActionContainer,
   StyledFormContainer,
@@ -26,7 +28,7 @@ const Register = () => {
   });
   const navigate = useNavigate();
 
-  const [registerUser, { data, error }] = useMutation(register);
+  const [registerUser, { data, loading, error }] = useMutation(register);
 
   if (error) {
     tost(ERROR_TEXT, "Something is wrong, please try again!");
@@ -110,7 +112,13 @@ const Register = () => {
             />
           </StyledInputContainer>
           <StyledInputContainer>
-            <StyledSubmit disabled={isEmpty} type="submit" value="Register" />
+            {!loading ?
+              <StyledSubmit disabled={isEmpty} type="submit" value="Register" />
+            :
+            <StyledButtonContainer>
+              <CircularProgress />
+            </StyledButtonContainer>
+            }
           </StyledInputContainer>
         </StyledFormContainer>
         <StyledExtraActionContainer>
