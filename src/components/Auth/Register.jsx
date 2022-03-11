@@ -37,7 +37,7 @@ const Register = () => {
   React.useEffect(() => {
     if (data) {
       const token = data?.signup?.token;
-      const userId = data?.login?.id;
+      const userId = data?.signup?.id;
       if(token) {
         saveInfo(USER_INFO_TEXT, {token, userId});
         navigate(routes.tracker)
