@@ -40,7 +40,7 @@ const CreateTag = ({ updateTagId, currentTag, submitTaskTagData }) => {
 
   const getTagValue = (tagId) => {
     if(data && tagId) {
-      const tag = data.tags.find((tag) => tag.id === tagId);
+      const tag = data?.tags?.find((tag) => tag.id === tagId);
       return tag?.title;
     }
   }
@@ -68,7 +68,7 @@ const CreateTag = ({ updateTagId, currentTag, submitTaskTagData }) => {
               Create +
             </option>
             {!loading &&
-              data.tags.map((tag) => (
+              data?.tags?.map((tag) => (
                 <option key={tag.id} value={tag.title}>
                   {tag.title}
                 </option>
