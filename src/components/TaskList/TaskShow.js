@@ -50,7 +50,7 @@ const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
   React.useEffect(() => {
     if (data) {
       const aggregate = data?.tasks_aggregate?.aggregate;
-      setTotalItems(aggregate?.totalCount);
+      setTotalItems(aggregate?.count);
     }
   }, [data]);
 
