@@ -10,16 +10,14 @@ export const tasksByTime = (data) => {
         acc[startTime] = { tasks: [task], totalTime: { totalHours: hours, totalMinutes: minutes, totalSeconds: seconds }};
       } else {
         let { totalHours, totalMinutes, totalSeconds } = acc[startTime]['totalTime'];
+
         totalHours += hours;
         totalMinutes += minutes;
         totalSeconds += seconds;
 
-        if(totalSeconds > 59) {
-          totalMinutes +=  1;
-        }
-        if(totalMinutes > 59) {
-          totalHours +=  1;
-        }
+        totalHours += Math.floor(totalMinutes / 60);
+        totalMinutes += Math.floor(totalSeconds / 60);
+        totalSeconds = totalSeconds % 60;
 
         acc[startTime]["tasks"].push(task);
         acc[startTime]["totalTime"] = { totalHours, totalMinutes, totalSeconds };
