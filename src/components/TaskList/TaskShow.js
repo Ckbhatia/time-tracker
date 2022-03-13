@@ -4,7 +4,7 @@ import get from "lodash/get";
 import { MdDelete } from "react-icons/md";
 import tost from "../../utils/toast"
 import CreateTag from "../Tag/CreateTag";
-import { SimplifyTime, getDurationTime } from "../../utils/dateTime";
+import { SimplifyTime, getDurationTime, getFormattedTime } from "../../utils/dateTime";
 import {
   StyledButtonContainer,
   StyledDateTime,
@@ -175,21 +175,26 @@ const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
       <div className="task-list-container">
         {!loading && data?.tasks?.length
           ? Object.keys(tasks)?.map((date) => {
-              const totalHours = get(
+              const tHours = get(
                 tasks,
                 `[${date}].totalTime.totalHours`,
                 0
               );
-              const totalMinutes = get(
+              const tMinutes = get(
                 tasks,
                 `[${date}].totalTime.totalMinutes`,
                 0
               );
-              const totalSeconds = get(
+              const tSeconds = get(
                 tasks,
                 `[${date}].totalTime.totalSeconds`,
                 0
               );
+
+              const totalHours = getFormattedTime(tHours);
+              const totalMinutes = getFormattedTime(tMinutes);
+              const totalSeconds = getFormattedTime(tSeconds);
+
               return (
                 <StyledListContainer key={date}>
                   <StyledHeaderContainer>
@@ -206,6 +211,9 @@ const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
                       task.start_time,
                       task.end_time
                     );
+                    const hrs = getFormattedTime(hours);
+                    const mins = getFormattedTime(minutes);
+                    const secs = getFormattedTime(seconds);
                     return (
                       <li key={task.id} value={task.name} data-id={task.id}>
                         <StyledTaskContainer
@@ -243,7 +251,7 @@ const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
                               </span>
                             </StyledTimeContainer>
                             <StyledTimeDifferenceContainer>
-                              {hours}:{minutes}:{seconds}
+                              {hrs}:{mins}:{secs}
                             </StyledTimeDifferenceContainer>
                             <StyledButtonContainer>
                               <button onClick={() => submitTaskData(task.id)}>
