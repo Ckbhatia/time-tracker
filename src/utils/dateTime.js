@@ -6,7 +6,7 @@ import moment from "moment";
  */
  export const SimplifyTime = (date) => {
 	if (date) {
-		return moment.utc(date).local().format("h:mm A");
+		return moment.utc(date).local().format("hh:mm A");
 	}
 };
 
@@ -47,3 +47,12 @@ export const getDurationTime = (startTime, endTime) => {
 
   return { days, hours, minutes, seconds };
 };
+
+/**
+ * Takes following param and returns formatted time ( pre-fix 0 if input number is less than 10)
+ * @param {number} time 
+ * @returns {number}
+ */
+export const getFormattedTime = (time) => {
+  return time < 10 ? `0${time}` : time;
+}
