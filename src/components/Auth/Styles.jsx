@@ -1,4 +1,4 @@
-import tw, { styled } from "twin.macro";
+import tw, { styled, css } from "twin.macro";
 
 export const StyledSection = styled.section`
   ${tw`flex flex-col items-center justify-center h-screen`}
@@ -32,10 +32,9 @@ export const StyledInput = styled.input`
     text-white
   `}
   background-color: var(--black-pearl);
-
 `;
 
-export const StyledSubmit = styled.input`
+const styledSubmitCss = css`
   ${tw`
     w-full
     rounded-md
@@ -48,16 +47,24 @@ export const StyledSubmit = styled.input`
     transition
     text-base text-white
   `}
-  background-color: var(--main-dark-cyan);
-  transition: all 0.2s ease-in-out;
-  &:hover { 
+    background-color: var(--main-dark-cyan);
+    transition: all 0.2s ease-in-out;
+    &:hover {
     background-color: #253235;
   }
-  
-  &:disabled { 
+
+  &:disabled {
     cursor: not-allowed;
     background-color: #414e53;
   }
+`;
+
+export const StyledSubmit = styled.input`
+  ${styledSubmitCss};
+`;
+
+export const StyledGuestButton = styled.button`
+  ${styledSubmitCss};
 `;
 
 export const StyledButtonContainer = styled.div`
@@ -72,7 +79,7 @@ export const StyledButtonContainer = styled.div`
 
 export const StyledExtraActionContainer = styled.div`
   text-align: center;
-`
+`;
 
 export const StyledLinkContainer = styled.span`
   ${tw`text-base text-white pt-2 pb-6`}

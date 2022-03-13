@@ -8,6 +8,7 @@ import {
   StyledContainer,
   StyledExtraActionContainer,
   StyledFormContainer,
+  StyledGuestButton,
   StyledInput,
   StyledInputContainer,
   StyledLinkContainer,
@@ -64,6 +65,13 @@ const Login = () => {
     setFormData({ ...formData, [name]: value });
   };
 
+  const handleGuestLogin = () => {
+    setFormData({
+      email: process.env.REACT_APP_GUEST_EMAIL,
+      password: process.env.REACT_APP_GUEST_PASSWORD,
+    });
+  }
+
 
   const isEmpty = !email || !password;
 
@@ -99,6 +107,9 @@ const Login = () => {
               <CircularProgress />
             </StyledButtonContainer>
             }
+          </StyledInputContainer>
+          <StyledInputContainer>
+            <StyledGuestButton onClick={handleGuestLogin} disabled={loading}>Guest login</StyledGuestButton>
           </StyledInputContainer>
         </StyledFormContainer>
         <StyledExtraActionContainer>
