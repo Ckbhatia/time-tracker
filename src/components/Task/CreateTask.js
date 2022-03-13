@@ -1,9 +1,14 @@
 import React, { useState } from "react";
 import { useMutation } from "@apollo/react-hooks";
 import CreateTag from "../Tag/CreateTag";
-import { AiFillPlayCircle, AiTwotoneStop } from "react-icons/ai";
+import { AiFillPlayCircle } from "react-icons/ai";
+import { BsFillStopCircleFill } from "react-icons/bs";
 import { getCurrentTime } from "../../utils/dateTime";
-import { StyledCreateTaskInput, StyledMainTaskContainer, StyledTaskContainer } from "./Styles";
+import {
+  StyledCreateTaskInput,
+  StyledMainTaskContainer,
+  StyledTaskContainer,
+} from "./Styles";
 import { createOneTask } from "../../service";
 import { AuthContext } from "../../Context/AuthContext";
 import tost from "../../utils/toast";
@@ -11,7 +16,7 @@ import { ERROR_TEXT } from "../../constants";
 
 const CreateTask = ({ udpateShouldRefetch }) => {
   const [title, setTitle] = useState("");
-  const [isTimerToggleStart, setTimerToggle] = useState(false);
+  const [isTimerRunning, setTimerRunning] = useState(false);
   const [timer, setTimer] = useState("00:00:00");
   const [timerId, setTimerId] = useState(null);
   const [startTime, setStartTime] = useState(() => getCurrentTime());
@@ -53,7 +58,7 @@ const CreateTask = ({ udpateShouldRefetch }) => {
 
   const startTimer = () => {
     // Toggle timer flag to true
-    setTimerToggle(true);
+    setTimerRunning(true);
 
     // updateStartTime
     setStartTime(getCurrentTime());
@@ -64,7 +69,9 @@ const CreateTask = ({ udpateShouldRefetch }) => {
 
     const intervalId = setInterval(() => {
       setTimer(
-        `${hr < 10 ? "0" + hr : hr}:${min < 10 ? "0" + min : min}:${sec < 10 ? "0" + sec : sec}`
+        `${hr < 10 ? "0" + hr : hr}:${min < 10 ? "0" + min : min}:${
+          sec < 10 ? "0" + sec : sec
+        }`
       );
       sec++;
       if (sec > 59) {
@@ -84,7 +91,7 @@ const CreateTask = ({ udpateShouldRefetch }) => {
 
   const stopTimer = async () => {
     // Toggle timer flag to false
-    setTimerToggle(false);
+    setTimerRunning(false);
 
     const endTime = getCurrentTime();
     submitTaskData(startTime, endTime);
@@ -96,8 +103,8 @@ const CreateTask = ({ udpateShouldRefetch }) => {
   };
 
   const handleClick = () => {
-    isTimerToggleStart ? stopTimer() : startTimer()
-  }
+    isTimerRunning ? stopTimer() : startTimer();
+  };
 
   return (
     <main className="main-create-task">
@@ -124,11 +131,14 @@ const CreateTask = ({ udpateShouldRefetch }) => {
 
           <div className="task-action-container">
             <CreateTag updateTagId={setTagId} />
-            <button
-              className="timer-button"
-              onClick={handleClick}
-              >
-              {isTimerToggleStart ? <AiTwotoneStop /> : <AiFillPlayCircle />}
+            <button className="timer-button" onClick={handleClick}>
+              <span>
+                {isTimerRunning ? (
+                  <BsFillStopCircleFill />
+                ) : (
+                  <AiFillPlayCircle />
+                )}
+              </span>
             </button>
             <div className="timer-container">
               <span className="timer">{timer}</span>
