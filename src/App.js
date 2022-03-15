@@ -2,7 +2,7 @@ import React from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import "./App.css";
 import { BrowserRouter as Router } from "react-router-dom";
-import { ApolloProvider } from "@apollo/react-hooks";
+import { ApolloProvider } from "@apollo/client";
 import client from "./utils/client";
 import authClient from "./utils/auth_client";
 import { getIsAuthenticated } from "./utils/auth";

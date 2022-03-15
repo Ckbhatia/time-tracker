@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useQuery, useMutation } from "@apollo/react-hooks";
+import { useQuery, useMutation } from "@apollo/client";
 import get from "lodash/get";
 import { MdDelete } from "react-icons/md";
 import tost from "../../utils/toast"

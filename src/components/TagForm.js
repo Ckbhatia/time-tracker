@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useMutation } from "@apollo/react-hooks";
+import { useMutation } from "@apollo/client";
 import { makeStyles } from "@material-ui/core/styles";
 import { StyledButton, StyledHeading, StyledInput } from "./TagForm.styles";
 import { createOneTag } from "../service";

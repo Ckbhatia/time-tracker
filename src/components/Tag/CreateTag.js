@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useQuery } from "@apollo/react-hooks";
+import { useQuery } from "@apollo/client";
 import Modal from "../Modal";
 import { StyledMainTagContainer, StyledSelect } from "./Styled";
 import { GetTags } from "../../service";
