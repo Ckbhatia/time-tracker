@@ -12,7 +12,7 @@ import {
 import { createOneTask } from "../../service";
 import { AuthContext } from "../../Context/AuthContext";
 import tost from "../../utils/toast";
-import { ERROR_TEXT } from "../../constants";
+import { ERROR_MESSAGE, ERROR_TEXT, INFO_TEXT, SUCCESS_TEXT } from "../../constants";
 
 const CreateTask = ({ udpateShouldRefetch }) => {
   const [title, setTitle] = useState("");
@@ -27,8 +27,23 @@ const CreateTask = ({ udpateShouldRefetch }) => {
   // GraphQl
   const [
     createAtask,
-    { loading: createTaskLoading, error: createTaskError },
+    { data, loading: createTaskLoading, error: createTaskError, reset },
   ] = useMutation(createOneTask);
+
+  if(data && !createTaskLoading) {
+    tost(SUCCESS_TEXT, "Task saved successfully");
+    reset();
+  }
+
+  if(!data && createTaskLoading) {
+    tost(INFO_TEXT, "Saving task...");
+    reset();
+  }
+
+  if (createTaskError) {
+    tost(ERROR_TEXT, ERROR_MESSAGE);
+    reset();
+  }
 
   const submitTaskData = async (startTime, endTime) => {
     if (!tagId) {

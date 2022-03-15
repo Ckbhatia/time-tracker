@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useQuery, useMutation } from "@apollo/client";
+import { useQuery, useMutation, NetworkStatus } from "@apollo/client";
 import get from "lodash/get";
 import { MdDelete } from "react-icons/md";
 import tost from "../../utils/toast"
@@ -28,7 +28,7 @@ import {
   updateTaskTitle,
 } from "../../service";
 import Pagination from "../Pagination";
-import { DEFAULT_LIMIT, ERROR_MESSAGE, ERROR_TEXT } from "../../constants";
+import { DEFAULT_LIMIT, ERROR_MESSAGE, ERROR_TEXT, INFO_TEXT, SUCCESS_TEXT } from "../../constants";
 import { AuthContext } from "../../Context/AuthContext";
 
 const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
@@ -47,6 +47,28 @@ const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
     },
   });
 
+
+  if(!data && loading) {
+    tost(INFO_TEXT, "Loading tasks...");
+  }
+
+  if(networkStatus === NetworkStatus.loading) {
+    tost(SUCCESS_TEXT, "Loaded tasks successfully");
+  }
+
+  if (networkStatus === NetworkStatus.refetch) {
+    tost(SUCCESS_TEXT, "Re-fetch tasks successfully");
+  }
+
+  if (networkStatus === NetworkStatus.fetchMore) {
+    tost(SUCCESS_TEXT, "Fetched more tasks successfully");
+  }
+
+
+  if (error) {
+    tost(ERROR_TEXT, ERROR_MESSAGE);
+  }
+
   React.useEffect(() => {
     if (data) {
       const aggregate = data?.tasks_aggregate?.aggregate;
@@ -56,20 +78,65 @@ const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
 
   const [
     deleteAtask,
-    { loading: delMutLoading, error: delMutError },
+    { data: delMutData, loading: delMutLoading, error: deleteATaskError, reset: resetDeleteTask },
   ] = useMutation(deleteOneTask);
+
+
+  if(delMutData && !delMutLoading) {
+    tost(SUCCESS_TEXT, "Deleted a task successfully");
+    resetDeleteTask();
+  }
+
+  if(!delMutData && delMutLoading) {
+    tost(INFO_TEXT, "Deleting a task...");
+    resetDeleteTask();
+  }
+
+  if (deleteATaskError) {
+    tost(ERROR_TEXT, "Delete a task failed");
+    resetDeleteTask();
+  }
 
   const [
     updateATaskTag,
-    { error: updateMutError },
+    { data: updateTaskTagData, loading: loadingTaskTag, error: updateTaskTagError, reset: resetUpdateTaskTag },
   ] = useMutation(updateOneTaskTag);
+
+  if(updateTaskTagData && !loadingTaskTag) {
+    tost(SUCCESS_TEXT, "Updated a task's tag successfully");
+    resetUpdateTaskTag();
+  }
+
+  if(!updateTaskTagData && loadingTaskTag) {
+    tost(INFO_TEXT, "Updating a task's tag...");
+    resetUpdateTaskTag();
+  }
+
+  if (updateTaskTagError) {
+    tost(ERROR_TEXT, "Update a task's tag failed");
+    resetUpdateTaskTag();
+  }
 
   const [
     updateATaskTitle,
-    { error: updateTaskMutError },
+    { data: updateATaskTitleData, loading: updateATaskTitleLoading, error: updateTaskTitleMutError,  reset: resetUpdateTaskTitle },
   ] = useMutation(updateTaskTitle);
 
-  const [tagId, updateTagId] = useState(null);
+  if(updateATaskTitleData && !updateATaskTitleLoading) {
+    tost(SUCCESS_TEXT, "Updated a task's title successfully");
+    resetUpdateTaskTitle();
+  }
+
+  if(!updateATaskTitleData && updateATaskTitleLoading) {
+    tost(INFO_TEXT, "Updating a task's title...");
+    resetUpdateTaskTitle();
+  }
+
+  if (updateTaskTitleMutError) {
+    tost(ERROR_TEXT, "Update a task's title failed");
+    resetUpdateTaskTitle();
+  }
+
   const [currentTaskId, updateCurrentTaskId] = useState(null);
 
   useEffect(() => {
@@ -116,23 +183,6 @@ const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
       setEditTaskInfo({ ...editTaskInfo, value: e.target.value });
     }
   };
-
-  if (error) {
-    tost(ERROR_TEXT, ERROR_MESSAGE);
-  }
-
-  if (delMutError) {
-    tost(ERROR_TEXT, "Error! couldn't delete the task. Please retry.");
-  }
-
-  if (updateMutError) {
-    tost(ERROR_TEXT, "Error! couldn't update the tag. Please retry.");
-  }
-
-  if (updateTaskMutError) {
-    tost(ERROR_TEXT, "Error! couldn't update the title. Please retry.");
-  }
-  
 
   const tasks = tasksByTime(data);
 
@@ -219,7 +269,7 @@ const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
                         <StyledTaskContainer
                           onClick={(e) => {
                             updateCurrentTaskId(
-                              Number(e.currentTarget.parentNode.dataset.id)
+                              Number(e?.currentTarget?.parentNode?.dataset?.id)
                             );
                           }}
                         >
@@ -235,7 +285,7 @@ const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
                             </StyledTaskInputContainer>
                             <StyledTagContainer>
                               <CreateTag
-                                updateTagId={updateTagId}
+                                updateTagId={() => {}}
                                 currentTag={task?.tag_id}
                                 submitTaskTagData={submitTaskTagData}
                               />

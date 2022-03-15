@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useMutation } from "@apollo/react-hooks";
+import { useMutation } from '@apollo/client';
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { register } from "../../service";
 import {
@@ -16,8 +16,9 @@ import {
 } from "./Styles";
 import { routes } from "../../constants/routes";
 import { saveInfo } from "../../utils/storage";
-import { USER_INFO_TEXT } from "../../constants";
+import { SUCCESS_TEXT, USER_INFO_TEXT } from "../../constants";
 import { handleAuthError } from "../../utils/auth";
+import tost from "../../utils/toast";
 
 const Register = () => {
   const [formData, setFormData] = React.useState({
@@ -32,6 +33,11 @@ const Register = () => {
 
   if (error) {
     handleAuthError(error);
+    reset()
+  }
+
+  if(data && !loading) {
+    tost(SUCCESS_TEXT, "Account created successfully");
     reset()
   }
 

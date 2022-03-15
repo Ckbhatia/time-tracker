@@ -4,6 +4,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import { StyledButton, StyledHeading, StyledInput } from "./TagForm.styles";
 import { createOneTag } from "../service";
 import { AuthContext } from "../Context/AuthContext";
+import { SUCCESS_TEXT, INFO_TEXT, ERROR_TEXT, ERROR_MESSAGE } from "../constants";
+import tost from "../utils/toast";
 
 function rand() {
   return Math.round(Math.random() * 20) - 10;
@@ -40,12 +42,27 @@ const TagForm = ({ open, setOpen, refetch }) => {
   const [inputValue, updateInputValue] = useState("");
   const { userInfo } = React.useContext(AuthContext);
 
-  const [createATag ] = useMutation(createOneTag);
+  const [createATag, { data, loading, error, reset } ] = useMutation(createOneTag);
+
+  if(data && !loading) {
+    tost(SUCCESS_TEXT, "Tag created successfully");
+    reset();
+  }
+
+  if(!data && loading) {
+    tost(INFO_TEXT, "Creating tag...");
+    reset();
+  }
+
+  if (error) {
+    tost(ERROR_TEXT, ERROR_MESSAGE);
+    reset();
+  }
 
   const submitTagData = async () => {
     await createATag({
       variables: {
-        title: inputValue,
+        title: inputValue?.trim(),
         author_id: userInfo?.userId,
       },
     });
