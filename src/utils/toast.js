@@ -14,11 +14,11 @@ const tost = (
     toast[type](description, {
       position,
       autoClose: duration,
-      hideProgressBar: false,
+      hideProgressBar: true,
       closeOnClick: true,
       pauseOnHover: true,
       draggable: true,
-      progress: true,
+      progress: false,
       onClose: () => {
         // Find & remove the message from messageQueue
         const index = descriptionQueue.indexOf(description);
