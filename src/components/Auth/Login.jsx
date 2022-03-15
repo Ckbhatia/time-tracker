@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useMutation } from "@apollo/react-hooks";
+import { useMutation } from '@apollo/client';
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { login } from "../../service";
 import {
@@ -16,9 +16,9 @@ import {
   StyledSubmit,
 } from "./Styles";
 import { routes } from "../../constants/routes";
-import { USER_INFO_TEXT, ERROR_TEXT } from "../../constants";
+import { USER_INFO_TEXT } from "../../constants";
 import { saveInfo } from "../../utils/storage";
-import tost from "../../utils/toast";
+import { handleAuthError } from "../../utils/auth";
 
 const Login = () => {
   const [formData, setFormData] = React.useState({
@@ -30,11 +30,12 @@ const Login = () => {
   
   const [
     loginUser,
-    { data, loading, error },
+    { data, loading, error, reset },
   ] = useMutation(login);
 
   if (error) {
-    tost(ERROR_TEXT, "Something is wrong, please try again!");
+    handleAuthError(error);
+    reset()
   }
 
   React.useEffect(() => {
