@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useMutation } from "@apollo/client";
-import CreateTag from "../Tag/CreateTag";
+import Tag from "../Tag/Tag";
 import { AiFillPlayCircle } from "react-icons/ai";
 import { BsFillStopCircleFill } from "react-icons/bs";
 import { getCurrentTime } from "../../utils/dateTime";
@@ -145,7 +145,7 @@ const CreateTask = ({ udpateShouldRefetch }) => {
           </div>
 
           <div className="task-action-container">
-            <CreateTag updateTagId={setTagId} />
+            <Tag updateTagId={setTagId} />
             <button className="timer-button" onClick={handleClick}>
               <span>
                 {isTimerRunning ? (

@@ -3,7 +3,7 @@ import { useQuery, useMutation, NetworkStatus } from "@apollo/client";
 import get from "lodash/get";
 import { MdDelete } from "react-icons/md";
 import tost from "../../utils/toast"
-import CreateTag from "../Tag/CreateTag";
+import Tag from "../Tag/Tag";
 import { SimplifyTime, getDurationTime, getFormattedTime } from "../../utils/dateTime";
 import {
   StyledButtonContainer,
@@ -284,7 +284,7 @@ const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
                               />
                             </StyledTaskInputContainer>
                             <StyledTagContainer>
-                              <CreateTag
+                              <Tag
                                 updateTagId={() => {}}
                                 currentTag={task?.tag_id}
                                 submitTaskTagData={submitTaskTagData}

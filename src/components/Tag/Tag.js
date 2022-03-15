@@ -7,7 +7,7 @@ import { AuthContext } from "../../Context/AuthContext";
 import { CREATE_NEW_TEXT, ERROR_MESSAGE, ERROR_TEXT } from "../../constants";
 import tost from "../../utils/toast";
 
-const CreateTag = ({ updateTagId, currentTag, submitTaskTagData }) => {
+const Tag = ({ updateTagId, currentTag, submitTaskTagData }) => {
   const [open, setOpen] = useState(false);
   const { userInfo } = React.useContext(AuthContext);
 
@@ -80,4 +80,4 @@ const CreateTag = ({ updateTagId, currentTag, submitTaskTagData }) => {
   );
 };
 
-export default CreateTag;
+export default Tag;
