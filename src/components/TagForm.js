@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import get from "lodash/get";
 import { useMutation } from "@apollo/client";
 import { makeStyles } from "@material-ui/core/styles";
 import { StyledButton, StyledHeading, StyledInput } from "./TagForm.styles";
@@ -35,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-const TagForm = ({ open, setOpen, refetch }) => {
+const TagForm = ({ refetch, handleSave }) => {
   const [modalStyle] = useState(getModalStyle);
   const classes = useStyles();
 
@@ -46,6 +47,12 @@ const TagForm = ({ open, setOpen, refetch }) => {
 
   if(data && !loading) {
     tost(SUCCESS_TEXT, "Tag created successfully");
+    const title = get(data, 'insert_tags_one.title', null);
+    const tagId = get(data, 'insert_tags_one.id', null);
+    if(title) {
+      handleSave(title, tagId)
+    }
+    refetch();
     reset();
   }
 
@@ -59,34 +66,37 @@ const TagForm = ({ open, setOpen, refetch }) => {
     reset();
   }
 
-  const submitTagData = async () => {
-    await createATag({
-      variables: {
-        title: inputValue?.trim(),
-        author_id: userInfo?.userId,
-      },
-    });
-    // Refetch after
-    refetch();
-    // Reset
-    updateInputValue("");
-    // Set modal
-    setOpen(!open);
+  const submitTagData = async (e) => {
+    e.preventDefault();
+
+    if(inputValue && inputValue?.trim()) {
+      await createATag({
+        variables: {
+          title: inputValue?.trim(),
+          author_id: userInfo?.userId,
+        },
+      });
+
+      // Reset
+      updateInputValue("");
+    }
   };
 
   return (
     <div style={modalStyle} className={classes.paper}>
       <StyledHeading>Create tag</StyledHeading>
-      <StyledInput
-        name="create-tag"
-        type="text"
-        value={inputValue}
-        placeholder="Tag title"
-        onChange={(e) => updateInputValue(e.target.value)}
-      />
-      <StyledButton className="create-btn" onClick={() => submitTagData()}>
-        Create
-      </StyledButton>
+      <form onSubmit={submitTagData}>
+        <StyledInput
+          name="create-tag"
+          type="text"
+          value={inputValue}
+          placeholder="Tag title"
+          onChange={(e) => updateInputValue(e.target.value)}
+          />
+        <StyledButton disabled={loading} className="create-btn">
+          Create
+        </StyledButton>
+      </form>
     </div>
   );
 };
