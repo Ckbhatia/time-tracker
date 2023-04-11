@@ -2,12 +2,12 @@ import { gql } from '@apollo/client';
 
 export const GetTasks = gql`
 	query ($limit: Int!, $offset: Int!, $author_id: Int!) {
-		tasks_aggregate(where: {author_id: {_eq: $author_id}}) {
+		time_tracker_tasks_aggregate(where: {author_id: {_eq: $author_id}}) {
 			aggregate {
 				count: count(columns: id)
 			}
 		}
-		tasks(where: {author_id: {_eq: $author_id}}, limit: $limit, offset: $offset, order_by: {start_time: desc}) {
+		time_tracker_tasks(where: {author_id: {_eq: $author_id}}, limit: $limit, offset: $offset, order_by: {start_time: desc}) {
 			title
 			id
 			created_at
@@ -27,7 +27,7 @@ export const createOneTask = gql`
     $tag_id: Int
     $author_id: Int!
   ) {
-    insert_tasks_one(
+    insert_time_tracker_tasks_one(
       object: {
         title: $title
         start_time: $start_time
@@ -49,7 +49,7 @@ export const createOneTask = gql`
 
 export const updateTaskTitle = gql`
   mutation ($id: Int!, $title: String) {
-    update_tasks_by_pk(pk_columns: {id: $id}, _set: { title: $title }) {
+    update_time_tracker_tasks_by_pk(pk_columns: {id: $id}, _set: { title: $title }) {
       id
       title
     }
@@ -58,7 +58,7 @@ export const updateTaskTitle = gql`
 
 export const deleteOneTask = gql`
 	mutation($id: Int!) {
-		delete_tasks(where: { id: { _eq: $id } }) {
+		delete_time_tracker_tasks(where: { id: { _eq: $id } }) {
 			returning {
 				id
 				title

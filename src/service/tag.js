@@ -2,7 +2,7 @@ import { gql } from '@apollo/client';
 
 export const GetTags = gql`
   query($author_id: Int!) {
-    tags(where: {author_id: {_eq: $author_id}}, order_by: { created_at: desc }) {
+    time_tracker_tags(where: {author_id: {_eq: $author_id}}, order_by: { created_at: desc }) {
       id
       title
     }
@@ -11,7 +11,7 @@ export const GetTags = gql`
 
 export const createOneTag = gql`
   mutation($title: String!, $author_id: Int!) {
-    insert_tags_one(object: { title: $title, author_id: $author_id }) {
+    insert_time_tracker_tags_one(object: { title: $title, author_id: $author_id }) {
       id
       title
     }
@@ -20,7 +20,7 @@ export const createOneTag = gql`
 
 export const updateOneTaskTag = gql`
 mutation($task_id: Int!, $tag_id: Int!) {
-	update_tasks_by_pk(pk_columns: {id: $task_id}, _set: {tag_id: $tag_id}) {
+	update_time_tracker_tasks_by_pk(pk_columns: {id: $task_id}, _set: {tag_id: $tag_id}) {
     id
     tag_id
   }
