@@ -48,11 +48,11 @@ const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
   });
 
 
-  if(!data && loading) {
+  if (!data && loading) {
     tost(INFO_TEXT, "Loading tasks...");
   }
 
-  if(networkStatus === NetworkStatus.loading) {
+  if (networkStatus === NetworkStatus.loading) {
     tost(SUCCESS_TEXT, "Loaded tasks successfully");
   }
 
@@ -71,7 +71,7 @@ const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
 
   React.useEffect(() => {
     if (data) {
-      const aggregate = data?.tasks_aggregate?.aggregate;
+      const aggregate = data?.time_tracker_tasks_aggregate?.aggregate;
       setTotalItems(aggregate?.count);
     }
   }, [data]);
@@ -82,12 +82,12 @@ const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
   ] = useMutation(deleteOneTask);
 
 
-  if(delMutData && !delMutLoading) {
+  if (delMutData && !delMutLoading) {
     tost(SUCCESS_TEXT, "Deleted a task successfully");
     resetDeleteTask();
   }
 
-  if(!delMutData && delMutLoading) {
+  if (!delMutData && delMutLoading) {
     tost(INFO_TEXT, "Deleting a task...");
     resetDeleteTask();
   }
@@ -102,12 +102,12 @@ const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
     { data: updateTaskTagData, loading: loadingTaskTag, error: updateTaskTagError, reset: resetUpdateTaskTag },
   ] = useMutation(updateOneTaskTag);
 
-  if(updateTaskTagData && !loadingTaskTag) {
+  if (updateTaskTagData && !loadingTaskTag) {
     tost(SUCCESS_TEXT, "Updated a task's tag successfully");
     resetUpdateTaskTag();
   }
 
-  if(!updateTaskTagData && loadingTaskTag) {
+  if (!updateTaskTagData && loadingTaskTag) {
     tost(INFO_TEXT, "Updating a task's tag...");
     resetUpdateTaskTag();
   }
@@ -119,15 +119,15 @@ const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
 
   const [
     updateATaskTitle,
-    { data: updateATaskTitleData, loading: updateATaskTitleLoading, error: updateTaskTitleMutError,  reset: resetUpdateTaskTitle },
+    { data: updateATaskTitleData, loading: updateATaskTitleLoading, error: updateTaskTitleMutError, reset: resetUpdateTaskTitle },
   ] = useMutation(updateTaskTitle);
 
-  if(updateATaskTitleData && !updateATaskTitleLoading) {
+  if (updateATaskTitleData && !updateATaskTitleLoading) {
     tost(SUCCESS_TEXT, "Updated a task's title successfully");
     resetUpdateTaskTitle();
   }
 
-  if(!updateATaskTitleData && updateATaskTitleLoading) {
+  if (!updateATaskTitleData && updateATaskTitleLoading) {
     tost(INFO_TEXT, "Updating a task's title...");
     resetUpdateTaskTitle();
   }
@@ -147,7 +147,7 @@ const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
         udpateShouldRefetch(false);
       })();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shouldRefetch]);
 
   const submitTaskData = async (id) => {
@@ -185,7 +185,7 @@ const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
     }
   };
 
-  const tasks = tasksByTime(data);
+  const time_tracker_tasks = tasksByTime(data);
 
   const getTaskInputValue = (task) => {
     if (editTaskInfo) {
@@ -224,99 +224,99 @@ const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
   return (
     <StyledMainContainer>
       <div className="task-list-container">
-        {!loading && data?.tasks?.length
-          ? Object.keys(tasks)?.map((date) => {
-              const tHours = get(
-                tasks,
-                `[${date}].totalTime.totalHours`,
-                0
-              );
-              const tMinutes = get(
-                tasks,
-                `[${date}].totalTime.totalMinutes`,
-                0
-              );
-              const tSeconds = get(
-                tasks,
-                `[${date}].totalTime.totalSeconds`,
-                0
-              );
+        {!loading && data?.time_tracker_tasks?.length
+          ? Object.keys(time_tracker_tasks)?.map((date) => {
+            const tHours = get(
+              time_tracker_tasks,
+              `[${date}].totalTime.totalHours`,
+              0
+            );
+            const tMinutes = get(
+              time_tracker_tasks,
+              `[${date}].totalTime.totalMinutes`,
+              0
+            );
+            const tSeconds = get(
+              time_tracker_tasks,
+              `[${date}].totalTime.totalSeconds`,
+              0
+            );
 
-              const totalHours = getFormattedTime(tHours);
-              const totalMinutes = getFormattedTime(tMinutes);
-              const totalSeconds = getFormattedTime(tSeconds);
+            const totalHours = getFormattedTime(tHours);
+            const totalMinutes = getFormattedTime(tMinutes);
+            const totalSeconds = getFormattedTime(tSeconds);
 
-              return (
-                <StyledListContainer key={date}>
-                  <StyledHeaderContainer>
-                    <StyledDateTime>{date}</StyledDateTime>
-                    <StyledTotalTimeContainer>
-                      <span>Total:</span>
-                      <span>
-                        {`${totalHours}:${totalMinutes}:${totalSeconds}`}
-                      </span>
-                    </StyledTotalTimeContainer>
-                  </StyledHeaderContainer>
-                  {tasks[date]?.tasks?.map((task) => {
-                    const { hours, minutes, seconds } = getDurationTime(
-                      task.start_time,
-                      task.end_time
-                    );
-                    const hrs = getFormattedTime(hours);
-                    const mins = getFormattedTime(minutes);
-                    const secs = getFormattedTime(seconds);
-                    return (
-                      <li key={task.id} value={task.name} data-id={task.id}>
-                        <StyledTaskContainer
-                          onClick={(e) => {
-                            updateCurrentTaskId(
-                              Number(e?.currentTarget?.parentNode?.dataset?.id)
-                            );
-                          }}
-                        >
-                          <StyledTaskMainInfoContainer>
-                            <StyledTaskInputContainer className="task-input-container">
-                              <input
-                                type="text"
-                                name={`task-title-${task.id}`}
-                                value={getTaskInputValue(task)}
-                                onBlur={handleBlur}
-                                onChange={(e) => handleChange(e, task?.id)}
-                              />
-                            </StyledTaskInputContainer>
-                            <StyledTagContainer>
-                              <Tag
-                                updateTagId={() => {}}
-                                currentTag={task?.tag_id}
-                                submitTaskTagData={submitTaskTagData}
-                              />
-                            </StyledTagContainer>
-                          </StyledTaskMainInfoContainer>
-                          <StyledExtraInfoContainer>
-                            <StyledTimeContainer className="task-timer-container">
-                              <span className="start-time">
-                                {SimplifyTime(task.start_time)}
-                              </span>
-                              <span className="end-time">
-                                {SimplifyTime(task.end_time)}
-                              </span>
-                            </StyledTimeContainer>
-                            <StyledTimeDifferenceContainer>
-                              {hrs}:{mins}:{secs}
-                            </StyledTimeDifferenceContainer>
-                            <StyledButtonContainer>
-                              <button onClick={() => submitTaskData(task.id)}>
-                                <MdDelete />
-                              </button>
-                            </StyledButtonContainer>
-                          </StyledExtraInfoContainer>
-                        </StyledTaskContainer>
-                      </li>
-                    );
-                  })}
-                </StyledListContainer>
-              );
-            })
+            return (
+              <StyledListContainer key={date}>
+                <StyledHeaderContainer>
+                  <StyledDateTime>{date}</StyledDateTime>
+                  <StyledTotalTimeContainer>
+                    <span>Total:</span>
+                    <span>
+                      {`${totalHours}:${totalMinutes}:${totalSeconds}`}
+                    </span>
+                  </StyledTotalTimeContainer>
+                </StyledHeaderContainer>
+                {time_tracker_tasks[date]?.tasks?.map((task) => {
+                  const { hours, minutes, seconds } = getDurationTime(
+                    task.start_time,
+                    task.end_time
+                  );
+                  const hrs = getFormattedTime(hours);
+                  const mins = getFormattedTime(minutes);
+                  const secs = getFormattedTime(seconds);
+                  return (
+                    <li key={task.id} value={task.name} data-id={task.id}>
+                      <StyledTaskContainer
+                        onClick={(e) => {
+                          updateCurrentTaskId(
+                            Number(e?.currentTarget?.parentNode?.dataset?.id)
+                          );
+                        }}
+                      >
+                        <StyledTaskMainInfoContainer>
+                          <StyledTaskInputContainer className="task-input-container">
+                            <input
+                              type="text"
+                              name={`task-title-${task.id}`}
+                              value={getTaskInputValue(task)}
+                              onBlur={handleBlur}
+                              onChange={(e) => handleChange(e, task?.id)}
+                            />
+                          </StyledTaskInputContainer>
+                          <StyledTagContainer>
+                            <Tag
+                              updateTagId={() => { }}
+                              currentTag={task?.tag_id}
+                              submitTaskTagData={submitTaskTagData}
+                            />
+                          </StyledTagContainer>
+                        </StyledTaskMainInfoContainer>
+                        <StyledExtraInfoContainer>
+                          <StyledTimeContainer className="task-timer-container">
+                            <span className="start-time">
+                              {SimplifyTime(task.start_time)}
+                            </span>
+                            <span className="end-time">
+                              {SimplifyTime(task.end_time)}
+                            </span>
+                          </StyledTimeContainer>
+                          <StyledTimeDifferenceContainer>
+                            {hrs}:{mins}:{secs}
+                          </StyledTimeDifferenceContainer>
+                          <StyledButtonContainer>
+                            <button onClick={() => submitTaskData(task.id)}>
+                              <MdDelete />
+                            </button>
+                          </StyledButtonContainer>
+                        </StyledExtraInfoContainer>
+                      </StyledTaskContainer>
+                    </li>
+                  );
+                })}
+              </StyledListContainer>
+            );
+          })
           : null}
       </div>
       <Pagination
