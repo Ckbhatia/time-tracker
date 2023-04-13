@@ -2,8 +2,8 @@ import moment from "moment";
 import { getDurationTime } from "./dateTime";
 
 export const tasksByTime = (data) => {
-  if(data && data?.tasks?.length) {
-    return data.tasks.reduce((acc, task) => {
+  if(data && data?.time_tracker_tasks?.length) {
+    return data.time_tracker_tasks.reduce((acc, task) => {
       const startTime = moment.utc(task?.start_time).local().format('ll');
       const { hours, minutes, seconds } = getDurationTime(task.start_time, task.end_time);
       if(!acc[startTime]) {
