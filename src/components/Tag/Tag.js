@@ -30,7 +30,7 @@ const Tag = ({ updateTagId, currentTag, submitTaskTagData }) => {
   const handleChange = (e) => {
     const tagName = e?.target?.value;
     if (tagName !== CREATE_NEW_TEXT) {
-      const tag = data?.tags?.find((tag) => tag.title === tagName)
+      const tag = data?.time_tracker_tags?.find((tag) => tag.title === tagName)
       const tagId = tag?.id;
       if (submitTaskTagData) {
         submitTaskTagData(tagId);
@@ -83,7 +83,7 @@ const Tag = ({ updateTagId, currentTag, submitTaskTagData }) => {
               Create +
             </option>
             {!loading &&
-              data?.tags?.map((tag) => (
+              data?.time_tracker_tags?.map((tag) => (
                 <option key={tag.id} value={tag.title}>
                   {tag.title}
                 </option>
