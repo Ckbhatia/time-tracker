@@ -7,7 +7,7 @@
  */
 export const getTagValue = (data, tagId) => {
   if(data && tagId) {
-    const tag = data?.tags?.find((tag) => tag.id === tagId);
+    const tag = data?.time_tracker_tags?.find((tag) => tag.id === tagId);
     return tag?.title;
   }
 }
