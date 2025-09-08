@@ -100,23 +100,74 @@
 }
 
 .main-home {
-  height: 100vh;
   background: #253236;
 }
 
 .main-container {
   padding: 10px 15px;
   background-color: #253237;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .main-create-tag {
   padding: 10px 15px;
 }
 
+.create-tag {
+  display: inline-block;
+  padding: 5px 12px;
+  background-color: #026f02;
+  border-radius: 3px;
+  font-size: 16px;
+  margin: 0 10px;
+}
+
 .tag-select-menu {
-  max-width: 100px;
-  background-color: #1d272b;
+  max-width: max-content;
+  background-color: #0e1619;
   color: white;
+  position: relative;
+  top: 30%;
+  left: 38%;
+}
+
+.custom-dropdown {
+  position: relative;
+  width: 300px;
+  border: 1px solid #8080808c;
+  border-radius: 5px;
+  padding: 25px 20px;
+}
+
+.selected-item {
+  padding: 10px;
+  cursor: default;
+}
+
+.options-list {
+  /* margin: 30px auto; */
+  width: 100%;
+  border-top: 1px solid grey;
+  padding: 10px 0;
+  border-top: none;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  z-index: 10;
+}
+
+.options-list li {
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  
+}
+
+.options-list li:hover {
+  background-color: #27353b;
 }
 
 .timer-container {
