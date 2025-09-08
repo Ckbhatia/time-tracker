@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useMutation } from "@apollo/client";
 import Tag from "../Tag/Tag";
 import { AiFillPlayCircle } from "react-icons/ai";
@@ -12,17 +12,24 @@ import {
 import { createOneTask } from "../../service";
 import { AuthContext } from "../../Context/AuthContext";
 import tost from "../../utils/toast";
-import { ERROR_MESSAGE, ERROR_TEXT, INFO_TEXT, SUCCESS_TEXT } from "../../constants";
+import {
+  ERROR_MESSAGE,
+  ERROR_TEXT,
+  INFO_TEXT,
+  SUCCESS_TEXT,
+} from "../../constants";
+
+let timerId = null;
 
 const CreateTask = ({ udpateShouldRefetch }) => {
   const [title, setTitle] = useState("");
   const [isTimerRunning, setTimerRunning] = useState(false);
   const [timer, setTimer] = useState("00:00:00");
-  const [timerId, setTimerId] = useState(null);
   const [startTime, setStartTime] = useState(() => getCurrentTime());
   const [tagId, setTagId] = useState(null);
 
   const { userInfo } = React.useContext(AuthContext);
+  const { userId } = userInfo || { userId: null };
 
   // GraphQl
   const [
@@ -30,12 +37,12 @@ const CreateTask = ({ udpateShouldRefetch }) => {
     { data, loading: createTaskLoading, error: createTaskError, reset },
   ] = useMutation(createOneTask);
 
-  if(data && !createTaskLoading) {
+  if (data && !createTaskLoading) {
     tost(SUCCESS_TEXT, "Task saved successfully");
     reset();
   }
 
-  if(!data && createTaskLoading) {
+  if (!data && createTaskLoading) {
     tost(INFO_TEXT, "Saving task...");
     reset();
   }
@@ -45,44 +52,51 @@ const CreateTask = ({ udpateShouldRefetch }) => {
     reset();
   }
 
-  const submitTaskData = async (startTime, endTime) => {
-    if (!tagId) {
-      tost(ERROR_TEXT, "Please select a tag");
-      return;
-    } else if (!title) {
-      tost(ERROR_TEXT, "Please type a title");
-      return;
-    } else {
-      await createAtask({
-        variables: {
-          title,
-          start_time: startTime,
-          end_time: endTime,
-          tag_id: tagId,
-          author_id: userInfo?.userId,
-        },
-      });
-      // Check if loading is over and there's no error
-      if (!createTaskLoading && !createTaskError) {
-        udpateShouldRefetch(true);
-      }
-      // Reset
-      setTitle("");
+  const refetchOnUpdate = useCallback(() => {
+    // Check if loading is over and there's no error
+    if (!createTaskLoading && !createTaskError) {
+      udpateShouldRefetch(true);
     }
-  };
+  }, [udpateShouldRefetch, createTaskLoading, createTaskError]);
 
-  const startTimer = () => {
+  const submitTaskData = useCallback(
+    async (tagId, title, startTime, endTime) => {
+      if (!tagId) {
+        tost(ERROR_TEXT, "Please select a tag");
+        return;
+      } else if (!title) {
+        tost(ERROR_TEXT, "Please type a title");
+        return;
+      } else {
+        await createAtask({
+          variables: {
+            title,
+            start_time: startTime,
+            end_time: endTime,
+            tag_id: tagId,
+            author_id: userId,
+          },
+        });
+        refetchOnUpdate();
+        // Reset
+        setTitle("");
+      }
+    },
+    [createAtask, userId, refetchOnUpdate]
+  );
+
+  const startTimer = useCallback(() => {
     // Toggle timer flag to true
     setTimerRunning(true);
 
     // updateStartTime
     setStartTime(getCurrentTime());
 
-    let sec = 0;
+    let sec = 1;
     let min = 0;
     let hr = 0;
 
-    const intervalId = setInterval(() => {
+    timerId = setInterval(() => {
       setTimer(
         `${hr < 10 ? "0" + hr : hr}:${min < 10 ? "0" + min : min}:${
           sec < 10 ? "0" + sec : sec
@@ -91,31 +105,27 @@ const CreateTask = ({ udpateShouldRefetch }) => {
       sec++;
       if (sec > 59) {
         min++;
-        sec -= 59;
+        sec = 0;
         if (min > 59) {
           // Reset minutes and inc hour
           hr++;
-          min -= 59;
+          min = 0;
         }
       }
     }, 1000);
+  }, []);
 
-    // Update timer
-    setTimerId(intervalId);
-  };
-
-  const stopTimer = async () => {
+  const stopTimer = useCallback(async () => {
     // Toggle timer flag to false
     setTimerRunning(false);
-
     const endTime = getCurrentTime();
-    submitTaskData(startTime, endTime);
+
+    clearInterval(timerId);
+    submitTaskData(tagId, title, startTime, endTime);
 
     // Reset timer
     setTimer("00:00:00");
-
-    clearInterval(timerId);
-  };
+  }, [tagId, title, submitTaskData, startTime]);
 
   const handleClick = () => {
     isTimerRunning ? stopTimer() : startTimer();
