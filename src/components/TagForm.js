@@ -1,11 +1,15 @@
 import React, { useState } from "react";
-import get from "lodash/get";
 import { useMutation } from "@apollo/client";
 import { makeStyles } from "@material-ui/core/styles";
 import { StyledButton, StyledHeading, StyledInput } from "./TagForm.styles";
 import { createOneTag } from "../service";
 import { AuthContext } from "../Context/AuthContext";
-import { SUCCESS_TEXT, INFO_TEXT, ERROR_TEXT, ERROR_MESSAGE } from "../constants";
+import {
+  SUCCESS_TEXT,
+  INFO_TEXT,
+  ERROR_TEXT,
+  ERROR_MESSAGE,
+} from "../constants";
 import tost from "../utils/toast";
 
 function rand() {
@@ -27,14 +31,13 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     position: "absolute",
     width: 400,
-    backgroundColor: '#13191b',
+    backgroundColor: "#13191b",
     border: "2px solid #000",
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
-    color: '#c5d2d9'
+    color: "#c5d2d9",
   },
 }));
-
 
 const TagForm = ({ refetch, handleSave }) => {
   const [modalStyle] = useState(getModalStyle);
@@ -43,33 +46,35 @@ const TagForm = ({ refetch, handleSave }) => {
   const [inputValue, updateInputValue] = useState("");
   const { userInfo } = React.useContext(AuthContext);
 
-  const [createATag, { data, loading, error, reset } ] = useMutation(createOneTag);
-
-  if(data && !loading) {
-    tost(SUCCESS_TEXT, "Tag created successfully");
-    const title = get(data, 'insert_tags_one.title', null);
-    const tagId = get(data, 'insert_tags_one.id', null);
-    if(title) {
-      handleSave(title, tagId)
+  const [createATag, { data, loading, reset }] = useMutation(
+    createOneTag,
+    {
+      onCompleted: (data) => {
+        tost(SUCCESS_TEXT, "Tag created successfully");
+        const title = data?.insert_time_tracker_tags_one?.title || null;
+        const tagId = data?.insert_time_tracker_tags_one?.id || null;
+        if (title) {
+          handleSave(title, tagId);
+        }
+        refetch();
+        reset();
+      },
+      onError: () => {
+        tost(ERROR_TEXT, ERROR_MESSAGE);
+        reset();
+      },
     }
-    refetch();
-    reset();
-  }
+  );
 
-  if(!data && loading) {
+  if (!data && loading) {
     tost(INFO_TEXT, "Creating tag...");
-    reset();
-  }
-
-  if (error) {
-    tost(ERROR_TEXT, ERROR_MESSAGE);
     reset();
   }
 
   const submitTagData = async (e) => {
     e.preventDefault();
 
-    if(inputValue && inputValue?.trim()) {
+    if (inputValue && inputValue?.trim()) {
       await createATag({
         variables: {
           title: inputValue?.trim(),
@@ -92,7 +97,7 @@ const TagForm = ({ refetch, handleSave }) => {
           value={inputValue}
           placeholder="Tag title"
           onChange={(e) => updateInputValue(e.target.value)}
-          />
+        />
         <StyledButton disabled={loading} className="create-btn">
           Create
         </StyledButton>

@@ -1,46 +1,74 @@
 import React, { useState } from "react";
-import { NetworkStatus, useQuery } from "@apollo/client";
+import { NetworkStatus, useMutation, useQuery } from "@apollo/client";
+import { MdDelete } from "react-icons/md";
 import Modal from "../Modal";
-import { StyledMainTagContainer, StyledSelect } from "./Styled";
-import { GetTags } from "../../service";
+import TagModal from "../TagModal";
+import { StyledMainTagContainer } from "./Styled";
+import { deleteOneTaskTag, GetTags } from "../../service";
 import { AuthContext } from "../../Context/AuthContext";
-import { CREATE_NEW_TEXT, ERROR_MESSAGE, ERROR_TEXT } from "../../constants";
+import {
+  ERROR_MESSAGE,
+  ERROR_TEXT,
+  INFO_TEXT,
+  SUCCESS_TEXT,
+} from "../../constants";
 import { getTagValue } from "../../utils/tag";
 import tost from "../../utils/toast";
 
-
 const Tag = ({ updateTagId, currentTag, submitTaskTagData }) => {
   const [open, setOpen] = useState(false);
+  const [isTagSelectOpen, setTagSelectOpen] = useState(false);
+
   const { userInfo } = React.useContext(AuthContext);
-  
+
   const { loading, error, data, refetch, networkStatus } = useQuery(GetTags, {
     notifyOnNetworkStatusChange: true,
     variables: {
       author_id: userInfo?.userId,
-    }
-  }
+    },
+  });
+
+  const [selectedTag, setSelectedTag] = useState(() =>
+    getTagValue(data, currentTag)
   );
 
-  const [selectedTag, setSelectedTag] = useState(() => getTagValue(data, currentTag));
-
-  if(networkStatus === NetworkStatus.loading && data) {
+  if (networkStatus === NetworkStatus.loading && data) {
     setSelectedTag(getTagValue(data, currentTag));
   }
 
-  const handleChange = (e) => {
-    const tagName = e?.target?.value;
-    if (tagName !== CREATE_NEW_TEXT) {
-      const tag = data?.time_tracker_tags?.find((tag) => tag.title === tagName)
+  const [
+    deleteATaskTag,
+    {
+      data: tagData,
+      loading: loadingTag,
+      reset: resetDeleteOneTag,
+    },
+  ] = useMutation(deleteOneTaskTag, {
+    onCompleted: () => {
+      refetch();
+      tost(SUCCESS_TEXT, "Deleted a tag successfully");
+      resetDeleteOneTag();
+    },
+    onError: () => {
+      tost(ERROR_TEXT, "Tag deletion failed");
+      resetDeleteOneTag();
+    },
+  });
+
+  const handleTagSelect = (e) => {
+    const currentTagId = e?.target?.value;
+    if (currentTagId) {
+      const tag = data?.time_tracker_tags?.find(
+        (tag) => tag.id === currentTagId
+      );
       const tagId = tag?.id;
+      setSelectedTag(tag.title);
       if (submitTaskTagData) {
         submitTaskTagData(tagId);
-        setSelectedTag(tagName);
       } else {
         updateTagId(tagId);
       }
-    }
-    else if(tagName === CREATE_NEW_TEXT) {
-      setOpen(true);
+      setTagSelectOpen(false);
     }
   };
 
@@ -49,48 +77,80 @@ const Tag = ({ updateTagId, currentTag, submitTaskTagData }) => {
   }
 
   const autoSelectTag = (tagTitle, tagId) => {
-    if(!selectedTag) {
+    if (!selectedTag) {
       setSelectedTag("default");
-    } 
-    else if (tagTitle) {
+    } else if (tagTitle) {
       setSelectedTag(tagTitle);
       if (submitTaskTagData) {
-      submitTaskTagData(tagId);
+        submitTaskTagData(tagId);
       }
     }
+  };
+
+  const handleTagOpen = () => {
+    setTagSelectOpen(true);
+  };
+
+  const handleTagClose = () => {
+    setTagSelectOpen(false);
+  };
+
+  const handleCreateTagOpen = () => {
+    setOpen(true);
+  };
+
+  if (!tagData && loadingTag) {
+    tost(INFO_TEXT, "Deleting a tag...");
+    resetDeleteOneTag();
   }
 
   return (
     <StyledMainTagContainer>
-        <div className="create-tag-container">
-          <StyledSelect
-            className="tag-select-menu"
-            name="tag-menu"
-            onChange={handleChange}
-            value={selectedTag}
-            defaultValue="default"
-          >
-             <option
-              disabled
-              value="default"
-            >
-              Select tag
-            </option>
-            <option
-              className="create-tag"
-              value={CREATE_NEW_TEXT}
-            >
-              Create +
-            </option>
-            {!loading &&
-              data?.time_tracker_tags?.map((tag) => (
-                <option key={tag.id} value={tag.title}>
-                  {tag.title}
-                </option>
-              ))}
-          </StyledSelect>
+      <div className="create-tag-container">
+        <span className="tag-select-text" onClick={handleTagOpen}>
+          {selectedTag || "Select a tag"}
+        </span>
       </div>
-      {open && <Modal open={open} setOpen={setOpen} refetch={refetch} autoSelectTag={autoSelectTag}/>}
+      {isTagSelectOpen && (
+        <Modal open={isTagSelectOpen} handleClose={handleTagClose}>
+          <div className="tag-select-menu" name="tag-menu">
+            <div className="custom-dropdown">
+              <button className="create-tag" onClick={handleCreateTagOpen}>
+                Create a new
+              </button>
+              <div className="selected-item">Select an option</div>
+              <ul className="options-list" onClick={handleTagSelect}>
+                {!loading &&
+                  data?.time_tracker_tags?.map((tag) => (
+                    <li key={tag?.id} value={tag?.id}>
+                      {tag.title}
+                      <button
+                        onClick={() => {
+                          deleteATaskTag({
+                            variables: {
+                              tag_id: tag?.id,
+                            },
+                          });
+                        }}
+                        disabled={loadingTag}
+                      >
+                        <MdDelete />
+                      </button>
+                    </li>
+                  ))}
+              </ul>
+            </div>
+          </div>
+        </Modal>
+      )}
+      {open && (
+        <TagModal
+          open={open}
+          setOpen={setOpen}
+          refetch={refetch}
+          autoSelectTag={autoSelectTag}
+        />
+      )}
     </StyledMainTagContainer>
   );
 };

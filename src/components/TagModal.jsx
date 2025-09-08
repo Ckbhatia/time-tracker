@@ -2,18 +2,18 @@ import React from "react";
 import Modal from "@material-ui/core/Modal";
 import TagForm from "./TagForm";
 
-export default function SimpleModal(props) {
+export default function TagModal(props) {
   const { open, setOpen, refetch, autoSelectTag } = props;
 
   const handleClose = () => {
-    autoSelectTag()
+    autoSelectTag();
     setOpen(false);
   };
 
   const handleSave = (tagTitle, tagId) => {
     autoSelectTag(tagTitle, tagId);
     setOpen(false);
-  }
+  };
 
   return (
     <div>
@@ -23,8 +23,7 @@ export default function SimpleModal(props) {
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description"
       >
-        <TagForm
-         refetch={refetch} handleSave={handleSave} />
+        <TagForm refetch={refetch} handleSave={handleSave} />
       </Modal>
     </div>
   );

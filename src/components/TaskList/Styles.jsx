@@ -57,7 +57,7 @@ export const StyledTaskMainInfoContainer = styled.div`
   @media (max-width: 600px) {
     flex-direction: column;
   }
-  ${tw`flex flex-row`};
+  ${tw`flex flex-row justify-between`};
 `;
 
 export const StyledExtraInfoContainer = styled.div`
@@ -73,7 +73,7 @@ export const StyledExtraInfoContainer = styled.div`
 `;
 
 export const StyledTaskInputContainer = styled.div`
-  width: 80%;
+  width: 75%%;
 
   @media (max-width: 1425px) {
     width: 65%;
@@ -94,7 +94,7 @@ export const StyledTaskInputContainer = styled.div`
 `;
 
 export const StyledTagContainer = styled.div`
-  width: 10%;
+  width: 25%;
   @media (max-width: 767px) {
     width: 35%;
   }
