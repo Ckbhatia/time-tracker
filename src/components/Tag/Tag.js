@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { NetworkStatus, useMutation, useQuery } from "@apollo/client";
+import React, { useEffect, useState } from "react";
+import { useMutation, useQuery } from "@apollo/client";
 import { MdDelete } from "react-icons/md";
 import Modal from "../Modal";
 import TagModal from "../TagModal";
@@ -22,9 +22,8 @@ const Tag = ({ updateTagId, currentTag, submitTaskTagData }) => {
   const { userInfo } = React.useContext(AuthContext);
   const userId = userInfo?.userId;
 
-  const { loading, error, data, refetch, networkStatus } = useQuery(GetTags, {
+  const { loading, error, data, refetch } = useQuery(GetTags, {
     skip: !userId,
-    notifyOnNetworkStatusChange: true,
     variables: {
       author_id: userId,
     },
@@ -34,9 +33,16 @@ const Tag = ({ updateTagId, currentTag, submitTaskTagData }) => {
     getTagValue(data, currentTag)
   );
 
-  if (networkStatus === NetworkStatus.loading && data) {
-    setSelectedTag(getTagValue(data, currentTag));
-  }
+  useEffect(() => {
+    if (!data) {
+      if (!currentTag) {
+        setSelectedTag("");
+      }
+      return;
+    }
+
+    setSelectedTag(getTagValue(data, currentTag) || "");
+  }, [currentTag, data]);
 
   const [
     deleteATaskTag,

@@ -14,6 +14,7 @@ import {
   createOneTask,
   deleteOneTask,
   GetActiveDraftTask,
+  updateDraftTaskProgress,
   updateDraftTask,
 } from "../../service";
 import { AuthContext } from "../../Context/AuthContext";
@@ -45,6 +46,8 @@ const CreateTask = ({ udpateShouldRefetch }) => {
   const [isResumedDraft, setIsResumedDraft] = useState(false);
 
   const intervalRef = useRef(null);
+  const draftSyncTimeoutRef = useRef(null);
+  const lastSyncedDraftRef = useRef({ title: "Draft", tag_id: null });
   const { userInfo } = React.useContext(AuthContext);
   const { userId } = userInfo || { userId: null };
 
@@ -59,7 +62,15 @@ const CreateTask = ({ udpateShouldRefetch }) => {
     udpateShouldRefetch(true);
   }, [udpateShouldRefetch]);
 
+  const clearDraftSyncTimeout = useCallback(() => {
+    if (draftSyncTimeoutRef.current) {
+      clearTimeout(draftSyncTimeoutRef.current);
+      draftSyncTimeoutRef.current = null;
+    }
+  }, []);
+
   const resetDraftState = useCallback(() => {
+    clearDraftSyncTimeout();
     clearTimerInterval();
     setTimerRunning(false);
     setTimer("00:00:00");
@@ -68,7 +79,8 @@ const CreateTask = ({ udpateShouldRefetch }) => {
     setDraftTaskId(null);
     setDraftStartTime(null);
     setIsResumedDraft(false);
-  }, [clearTimerInterval]);
+    lastSyncedDraftRef.current = { title: "Draft", tag_id: null };
+  }, [clearDraftSyncTimeout, clearTimerInterval]);
 
   const startTimerWithOffset = useCallback(
     (offsetSeconds = 0) => {
@@ -87,9 +99,10 @@ const CreateTask = ({ udpateShouldRefetch }) => {
 
   useEffect(() => {
     return () => {
+      clearDraftSyncTimeout();
       clearTimerInterval();
     };
-  }, [clearTimerInterval]);
+  }, [clearDraftSyncTimeout, clearTimerInterval]);
 
   const [
     createAtask,
@@ -100,12 +113,20 @@ const CreateTask = ({ udpateShouldRefetch }) => {
       setDraftTaskId(draft?.id || null);
       setDraftStartTime(draft?.start_time || null);
       setIsResumedDraft(false);
+      lastSyncedDraftRef.current = {
+        title: draft?.title || "Draft",
+        tag_id: draft?.tag_id || null,
+      };
       startTimerWithOffset(0);
     },
     onError: () => {
       tost(ERROR_TEXT, ERROR_MESSAGE);
     },
   });
+
+  const [
+    syncDraftProgress,
+  ] = useMutation(updateDraftTaskProgress);
 
   const [
     updateADraftTask,
@@ -163,12 +184,54 @@ const CreateTask = ({ udpateShouldRefetch }) => {
       setIsResumedDraft(true);
       setTagId(draft.tag_id || null);
       setTitle(draft.title === "Draft" ? "" : draft.title || "");
+      lastSyncedDraftRef.current = {
+        title: draft.title || "Draft",
+        tag_id: draft.tag_id || null,
+      };
       startTimerWithOffset(elapsedSeconds);
     },
     onError: () => {
       tost(ERROR_TEXT, "Failed to load active draft");
     },
   });
+
+  useEffect(() => {
+    if (!isTimerRunning || !draftTaskId) {
+      return;
+    }
+
+    const syncTitle = title.trim() ? title : "Draft";
+    const syncTagId = tagId || null;
+    const lastSynced = lastSyncedDraftRef.current;
+
+    if (lastSynced.title === syncTitle && lastSynced.tag_id === syncTagId) {
+      return;
+    }
+
+    clearDraftSyncTimeout();
+    draftSyncTimeoutRef.current = setTimeout(async () => {
+      try {
+        await syncDraftProgress({
+          variables: {
+            id: draftTaskId,
+            title: syncTitle,
+            tag_id: syncTagId,
+          },
+        });
+        lastSyncedDraftRef.current = {
+          title: syncTitle,
+          tag_id: syncTagId,
+        };
+      } catch (_) {}
+    }, 400);
+  }, [
+    clearDraftSyncTimeout,
+    draftTaskId,
+    isTimerRunning,
+    syncDraftProgress,
+    tagId,
+    title,
+  ]);
 
   const startTimer = useCallback(async () => {
     if (!userId || createDraftLoading || updateDraftLoading || deleteDraftLoading) {
@@ -211,6 +274,7 @@ const CreateTask = ({ udpateShouldRefetch }) => {
       return;
     }
 
+    clearDraftSyncTimeout();
     clearTimerInterval();
     setTimerRunning(false);
 
@@ -223,6 +287,7 @@ const CreateTask = ({ udpateShouldRefetch }) => {
       },
     });
   }, [
+    clearDraftSyncTimeout,
     clearTimerInterval,
     draftTaskId,
     tagId,
@@ -243,12 +308,13 @@ const CreateTask = ({ udpateShouldRefetch }) => {
       return;
     }
 
+    clearDraftSyncTimeout();
     await deleteADraftTask({
       variables: {
         id: draftTaskId,
       },
     });
-  }, [deleteADraftTask, deleteDraftLoading, draftTaskId]);
+  }, [clearDraftSyncTimeout, deleteADraftTask, deleteDraftLoading, draftTaskId]);
 
   const handleClick = () => {
     isTimerRunning ? stopTimer() : startTimer();

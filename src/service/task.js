@@ -71,6 +71,19 @@ export const updateTaskTitle = gql`
   }
 `;
 
+export const updateDraftTaskProgress = gql`
+  mutation ($id: Int!, $title: String!, $tag_id: Int) {
+    update_time_tracker_tasks_by_pk(
+      pk_columns: { id: $id }
+      _set: { title: $title, tag_id: $tag_id }
+    ) {
+      id
+      title
+      tag_id
+    }
+  }
+`;
+
 export const deleteOneTask = gql`
 	mutation($id: Int!) {
 		delete_time_tracker_tasks(where: { id: { _eq: $id } }) {
