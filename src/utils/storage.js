@@ -2,8 +2,8 @@ import get from "lodash/get";
 import { USER_INFO_TEXT } from "../constants";
 
 
-export const getUserInfo = async () => {
-  return await JSON.parse(localStorage.getItem(USER_INFO_TEXT));
+export const getUserInfo = () => {
+  return JSON.parse(localStorage.getItem(USER_INFO_TEXT));
 };
 
 export const saveInfo = (key, payload) => {

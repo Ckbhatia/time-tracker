@@ -20,11 +20,13 @@ const Tag = ({ updateTagId, currentTag, submitTaskTagData }) => {
   const [isTagSelectOpen, setTagSelectOpen] = useState(false);
 
   const { userInfo } = React.useContext(AuthContext);
+  const userId = userInfo?.userId;
 
   const { loading, error, data, refetch, networkStatus } = useQuery(GetTags, {
+    skip: !userId,
     notifyOnNetworkStatusChange: true,
     variables: {
-      author_id: userInfo?.userId,
+      author_id: userId,
     },
   });
 

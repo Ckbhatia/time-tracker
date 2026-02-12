@@ -3,7 +3,7 @@ import { getDurationTime } from "./dateTime";
 
 export const tasksByTime = (data) => {
   if(data && data?.time_tracker_tasks?.length) {
-    return data.time_tracker_tasks.reduce((acc, task) => {
+    return data.time_tracker_tasks.filter((task) => task?.end_time).reduce((acc, task) => {
       const startTime = moment.utc(task?.start_time).local().format('ll');
       const { days, hours, minutes, seconds } = getDurationTime(task.start_time, task.end_time);
       if(!acc[startTime]) {

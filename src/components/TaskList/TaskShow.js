@@ -37,13 +37,15 @@ const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
   const [totalItems, setTotalItems] = useState(0);
 
   const { userInfo } = React.useContext(AuthContext);
+  const userId = userInfo?.userId;
 
   const { loading, error, data, refetch, networkStatus } = useQuery(GetTasks, {
+    skip: !userId,
     notifyOnNetworkStatusChange: true,
     variables: {
       limit: DEFAULT_LIMIT,
       offset,
-      author_id: userInfo?.userId,
+      author_id: userId,
     },
   });
 
@@ -185,7 +187,14 @@ const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
     }
   };
 
-  const time_tracker_tasks = tasksByTime(data);
+  const completedTasksData = data
+    ? {
+      ...data,
+      time_tracker_tasks: data?.time_tracker_tasks?.filter((task) => task?.end_time) || [],
+    }
+    : data;
+
+  const time_tracker_tasks = tasksByTime(completedTasksData);
 
   const getTaskInputValue = (task) => {
     if (editTaskInfo) {
