@@ -4,6 +4,7 @@ import { useMutation, useQuery } from "@apollo/client";
 import Tag from "../Tag/Tag";
 import { AiFillPlayCircle } from "react-icons/ai";
 import { BsFillStopCircleFill } from "react-icons/bs";
+import { FiMoreVertical } from "react-icons/fi";
 import { getCurrentTime } from "../../utils/dateTime";
 import {
   StyledCreateTaskInput,
@@ -43,11 +44,14 @@ const CreateTask = ({ udpateShouldRefetch }) => {
   const [tagId, setTagId] = useState(null);
   const [draftTaskId, setDraftTaskId] = useState(null);
   const [draftStartTime, setDraftStartTime] = useState(null);
-  const [isResumedDraft, setIsResumedDraft] = useState(false);
+  const [, setIsResumedDraft] = useState(false);
 
   const intervalRef = useRef(null);
   const draftSyncTimeoutRef = useRef(null);
+  const draftMenuRef = useRef(null);
   const lastSyncedDraftRef = useRef({ title: "Draft", tag_id: null });
+  const [isDraftMenuOpen, setIsDraftMenuOpen] = useState(false);
+  const [isDiscardConfirmOpen, setDiscardConfirmOpen] = useState(false);
   const { userInfo } = React.useContext(AuthContext);
   const { userId } = userInfo || { userId: null };
 
@@ -72,6 +76,8 @@ const CreateTask = ({ udpateShouldRefetch }) => {
   const resetDraftState = useCallback(() => {
     clearDraftSyncTimeout();
     clearTimerInterval();
+    setIsDraftMenuOpen(false);
+    setDiscardConfirmOpen(false);
     setTimerRunning(false);
     setTimer("00:00:00");
     setTitle("");
@@ -103,6 +109,20 @@ const CreateTask = ({ udpateShouldRefetch }) => {
       clearTimerInterval();
     };
   }, [clearDraftSyncTimeout, clearTimerInterval]);
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (!draftMenuRef.current?.contains(event.target)) {
+        setIsDraftMenuOpen(false);
+        setDiscardConfirmOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
 
   const [
     createAtask,
@@ -300,14 +320,8 @@ const CreateTask = ({ udpateShouldRefetch }) => {
       return;
     }
 
-    const shouldDiscard = window.confirm(
-      "Discard this draft timer entry permanently?"
-    );
-
-    if (!shouldDiscard) {
-      return;
-    }
-
+    setDiscardConfirmOpen(false);
+    setIsDraftMenuOpen(false);
     clearDraftSyncTimeout();
     await deleteADraftTask({
       variables: {
@@ -316,7 +330,18 @@ const CreateTask = ({ udpateShouldRefetch }) => {
     });
   }, [clearDraftSyncTimeout, deleteADraftTask, deleteDraftLoading, draftTaskId]);
 
+  const openDiscardConfirm = useCallback(() => {
+    if (!draftTaskId || deleteDraftLoading) {
+      return;
+    }
+
+    setIsDraftMenuOpen(false);
+    setDiscardConfirmOpen(true);
+  }, [deleteDraftLoading, draftTaskId]);
+
   const handleClick = () => {
+    setIsDraftMenuOpen(false);
+    setDiscardConfirmOpen(false);
     isTimerRunning ? stopTimer() : startTimer();
   };
 
@@ -352,6 +377,7 @@ const CreateTask = ({ udpateShouldRefetch }) => {
               className="timer-button"
               onClick={handleClick}
               disabled={isActionDisabled}
+              type="button"
             >
               <span>
                 {isTimerRunning ? <BsFillStopCircleFill /> : <AiFillPlayCircle />}
@@ -360,15 +386,43 @@ const CreateTask = ({ udpateShouldRefetch }) => {
             <div className="timer-container">
               <span className="timer">{timer}</span>
             </div>
-            {isResumedDraft && isTimerRunning ? (
-              <button
-                className="timer-button"
-                onClick={discardDraft}
-                disabled={isActionDisabled}
-                type="button"
-              >
-                Discard
-              </button>
+            {draftTaskId && isTimerRunning ? (
+              <div className="draft-menu-container" ref={draftMenuRef}>
+                <button
+                  className="timer-button draft-menu-trigger"
+                  onClick={() => setIsDraftMenuOpen((open) => !open)}
+                  disabled={isActionDisabled}
+                  type="button"
+                  aria-label="Task actions"
+                >
+                  <FiMoreVertical />
+                </button>
+                {isDraftMenuOpen ? (
+                  <div className="draft-menu-dropdown">
+                    <button
+                      className="draft-menu-item"
+                      onClick={openDiscardConfirm}
+                      disabled={isActionDisabled}
+                      type="button"
+                    >
+                      Discard
+                    </button>
+                  </div>
+                ) : null}
+                {isDiscardConfirmOpen ? (
+                  <div className="discard-confirm-overlay-panel">
+                    <span className="discard-confirm-text">Are you sure?</span>
+                    <button
+                      className="discard-confirm-button"
+                      onClick={discardDraft}
+                      disabled={isActionDisabled}
+                      type="button"
+                    >
+                      DISCARD
+                    </button>
+                  </div>
+                ) : null}
+              </div>
             ) : null}
           </div>
         </StyledTaskContainer>
