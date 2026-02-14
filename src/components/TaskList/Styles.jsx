@@ -50,21 +50,42 @@ export const StyledTaskContainer = styled.div`
 `;
 
 export const StyledTaskMainInfoContainer = styled.div`
-  width: 55%;
+  flex: 1 1 auto;
+  min-width: 0;
   @media (max-width: 767px) {
     width: 100%;
   }
   @media (max-width: 600px) {
     flex-direction: column;
   }
-  ${tw`flex flex-row justify-between`};
+  ${tw`flex flex-row justify-start`};
 `;
 
 export const StyledExtraInfoContainer = styled.div`
-  width: 45%;
+  width: auto;
+  margin-left: auto;
+  gap: 0;
+  justify-content: flex-end;
+
+  .task-meta-item {
+    min-height: 34px;
+    padding: 0 14px;
+    border-left: 1px dotted #2f4148;
+    display: flex;
+    align-items: center;
+  }
 
   @media (max-width: 767px) {
     width: 100%;
+    margin-left: 0;
+    justify-content: flex-start;
+    padding-top: 6px;
+    flex-wrap: wrap;
+
+    .task-meta-item {
+      border-left: none;
+      padding: 0 8px 0 0;
+    }
   }
   @media (max-width: 600px) {
     padding: 6px 0;
@@ -73,10 +94,10 @@ export const StyledExtraInfoContainer = styled.div`
 `;
 
 export const StyledTaskInputContainer = styled.div`
-  width: 75%%;
+  width: 100%;
 
   @media (max-width: 1425px) {
-    width: 65%;
+    width: 100%;
   }
   ${tw`flex flex-col`};
 
@@ -94,78 +115,116 @@ export const StyledTaskInputContainer = styled.div`
 `;
 
 export const StyledTagContainer = styled.div`
-  width: 25%;
+  width: auto;
+  flex-shrink: 0;
+
+  .tag-select-text {
+    font-size: 0.75rem;
+    line-height: 1.2;
+    color: #aebdc5;
+    background: #0d161b;
+    border: none;
+    border-radius: 2px;
+    min-width: 0;
+    max-width: none;
+    padding: 4px 12px;
+    max-height: none;
+  }
+
   @media (max-width: 767px) {
-    width: 35%;
+    width: auto;
   }
   @media (max-width: 600px) {
-    align-self: flex-start;
+    align-self: unset;
     width: unset;
   }
 `;
 
 export const StyledTimeContainer = styled.div`
-  width: 45%;
+  width: auto;
   color: var(--seren-setting);
+  flex-shrink: 0;
+  ${tw`flex flex-row items-center`};
+  gap: 2px;
+
+  .start-time,
+  .end-time {
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  .start-time {
+    margin-right: 8px;
+  }
+
+  .end-time {
+    margin-left: 8px;
+  }
 
   span {
     ${tw`text-xs sm:text-sm`};
   }
 
   @media (max-width: 1425px) {
-    width: 65%;
+    width: auto;
   }
 
   @media (max-width: 1125px) {
-    width: 75%;
+    width: auto;
   }
 
   @media (max-width: 767px) {
-    width: 35%;
+    width: auto;
   }
 
   @media (max-width: 614px) {
-    width: 45%;
+    width: auto;
   }
 
   @media (max-width: 525px) {
-    width: 55%;
+    width: auto;
   }
 
   @media (max-width: 360px) {
-    width: 70%;
+    width: auto;
   }
 
 `;
 
 export const StyledTimeDifferenceContainer = styled.span`
-  width: 15%;
-  ${tw`text-xs sm:text-sm`};
+  width: auto;
+  flex-shrink: 0;
+  ${tw`text-xl font-bold`};
 
   @media (max-width: 614px) {
-    width: 25%;
+    width: auto;
   }
 
   display: inline-block;
-  color: var(--seren-setting);
+  color: #d8e2e8;
 `;
 
 export const StyledButtonContainer = styled.div`
-  width: 10%;
+  width: auto;
+  flex-shrink: 0;
 
   @media (min-width: 600px) and (max-width: 767px) {
-    width: 15%;
+    width: auto;
   }
 
   button {
     background-color: transparent;
-    color: var(--seren-setting);
+    color: #d8e2e8;
     border: none;
     border-radius: 5px;
     padding: 5px;
 
+    svg {
+      font-size: 0.95rem;
+    }
+
     &:hover {
-      color: #8f8f8f;
+      color: #ffffff;
     }
   }
 `;

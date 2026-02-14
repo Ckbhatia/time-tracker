@@ -53,38 +53,245 @@
 }
 
 .task-form-container {
-  width: 60%;
+  flex: 1 1 auto;
+  min-width: 260px;
 }
 
 .task-action-container {
   display: flex;
-  justify-content: space-around;
-  align-items: center;
-  width: 40%;
+  align-items: stretch;
+  flex-shrink: 0;
+  flex-wrap: nowrap;
+  border-left: 1px dotted #2f4148;
   background-color: #1d272b;
+  margin-left: auto;
+}
+
+.task-action-segment {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  border-left: 1px dotted #2f4148;
+  min-height: 48px;
+  color: #8aa8b6;
+}
+
+.task-action-segment:first-child {
+  border-left: none;
+}
+
+.task-project-segment {
+  padding-left: 14px;
+}
+
+.task-project-segment .tag-select-text {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #0bb2f3;
+  font-size: 1rem;
+  line-height: 1;
+  min-width: 0;
+  max-width: none;
+  padding: 0;
+  max-height: none;
+}
+
+.task-project-segment .tag-select-text.tag-select-flat {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none;
+}
+
+.task-project-segment .tag-select-text:not(.tag-select-empty)::before {
+  content: "+";
+  display: inline-block;
+  margin-right: 8px;
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.task-project-segment .tag-select-text.tag-select-empty {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+}
+
+.task-project-segment .tag-select-icon {
+  color: #8ba3af;
+  font-size: 1rem;
+}
+
+.task-icon-segment {
+  justify-content: center;
+  min-width: 56px;
+}
+
+.task-icon-segment svg {
+  font-size: 1rem;
+  color: #8ba3af;
+}
+
+.manual-time-fields {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #ffffff;
+  min-width: 260px;
+  flex-shrink: 0;
+}
+
+.manual-date-input,
+.manual-time-input {
+  border: 0;
+  background-color: transparent;
+  color: #d9e2e7;
+  height: 34px;
+  padding: 0;
+  outline: none;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.manual-time-input {
+  width: 112px;
+  min-width: 112px;
+}
+
+.manual-date-group {
+  gap: 8px;
+  min-width: 170px;
+  flex-shrink: 0;
+}
+
+.manual-date-input {
+  width: 148px;
+  min-width: 148px;
+  text-transform: uppercase;
+}
+
+.manual-date-input,
+.manual-time-input {
+  color: #ffffff;
+  color-scheme: dark;
+  -webkit-text-fill-color: #ffffff;
+}
+
+.manual-date-input::-webkit-calendar-picker-indicator,
+.manual-time-input::-webkit-calendar-picker-indicator {
+  filter: brightness(0) invert(1);
+  opacity: 1;
+  cursor: pointer;
+}
+
+.manual-time-input::-webkit-datetime-edit,
+.manual-time-input::-webkit-datetime-edit-fields-wrapper,
+.manual-time-input::-webkit-datetime-edit-hour-field,
+.manual-time-input::-webkit-datetime-edit-minute-field,
+.manual-time-input::-webkit-datetime-edit-ampm-field,
+.manual-date-input::-webkit-datetime-edit,
+.manual-date-input::-webkit-datetime-edit-fields-wrapper,
+.manual-date-input::-webkit-datetime-edit-day-field,
+.manual-date-input::-webkit-datetime-edit-month-field,
+.manual-date-input::-webkit-datetime-edit-year-field {
+  color: #ffffff;
+}
+
+.manual-time-separator {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.primary-action-button {
+  border: 0;
+  border-radius: 2px;
+  background-color: #1aa3df;
+  color: #ffffff;
+  height: 48px;
+  min-width: 104px;
+  padding: 0 20px;
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+}
+
+.stop-action-button {
+  background-color: #cc2f3d;
+}
+
+.task_input {
+  font-size: 1rem;
+}
+
+.manual-add-button {
+  min-width: 110px;
+}
+
+.primary-action-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+@media (max-width: 1024px) {
+  .task-action-container {
+    width: 100%;
+    margin-left: 0;
+    border-left: 0;
+    border-top: 1px dotted #2f4148;
+    overflow-x: auto;
+  }
+
+  .task-action-segment {
+    border-left: 0;
+    border-right: 1px dotted #2f4148;
+    min-height: 44px;
+    padding: 0 12px;
+  }
+
+  .task-action-segment:last-child {
+    border-right: none;
+  }
+
+  .draft-menu-container {
+    border-left: 0;
+    border-right: 1px dotted #2f4148;
+    min-height: 44px;
+    padding: 0 10px;
+  }
 }
 
 @media (max-width: 768px) {
-  .task-container {
-    flex-direction: column;
-  }
-
   .task-form-container {
-    width: 80%;
+    min-width: 0;
   }
 
-  .task-action-container {
-    width: 80%;
-  }
-}
-
-@media (max-width: 525px) {
-  .task-form-container {
-    width: 100%;
+  .task-project-segment .tag-select-text,
+  .manual-date-input,
+  .manual-time-input,
+  .timer,
+  .primary-action-button {
+    font-size: 16px;
   }
 
-  .task-action-container {
-    width: 100%;
+  .primary-action-button {
+    min-width: 84px;
+    height: 40px;
+    padding: 0 14px;
+  }
+
+  .task-action-segment {
+    min-height: 40px;
+  }
+
+  .manual-time-fields {
+    gap: 6px;
+  }
+
+  .draft-menu-container {
+    min-height: 40px;
   }
 }
 
@@ -101,12 +308,12 @@
 
 .main-home {
   background: #253236;
+  height: 100vh;
 }
 
 .main-container {
   padding: 10px 15px;
   background-color: #253237;
-  max-width: 1200px;
   margin: 0 auto;
   width: 100%;
 }
@@ -172,12 +379,13 @@
 
 .timer-container {
   color: white;
-  width: 24%;
+  min-width: 132px;
 }
 
 .timer {
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 700;
+  color: #d9e2e7;
 }
 
 .input-box {
@@ -198,24 +406,36 @@
   border: 0;
   outline: 0;
   background-color: transparent;
-  color: crimson;
+  color: #8aa8b6;
   display: flex;
+  justify-content: center;
   align-items: center;
   position: relative;
-  font-size: 30px;
-  display: inline-block;
-  vertical-align: middle;
-  margin-left: 0px;
-  margin-right: 0px;
-  width: 50px;
+  font-size: 2rem;
+  width: 32px;
+  cursor: pointer;
+}
+
+.discard-confirm-button,
+.draft-menu-item {
+  font-size: 1rem;
 }
 
 .draft-menu-container {
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 12px;
+  border-left: 1px dotted #2f4148;
 }
 
 .draft-menu-trigger {
   color: #ffffff;
+  width: 24px;
+  height: 24px;
+  padding: 0;
 }
 
 .draft-menu-dropdown {
@@ -230,11 +450,16 @@
   z-index: 20;
 }
 
+
+.draft-menu-item-discard {
+  color: #ff6b6b;
+}
+
 .draft-menu-item {
   width: 100%;
   border: 0;
   background-color: transparent;
-  color: #ff6b6b;
+  color: #ffffff;
   padding: 10px 12px;
   text-align: left;
   cursor: pointer;
@@ -281,7 +506,7 @@
   color: #ffffff;
   min-width: 110px;
   height: 42px;
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
   padding: 0 12px;

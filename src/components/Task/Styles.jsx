@@ -8,7 +8,15 @@ export const StyledMainTaskContainer = styled.div`
 export const StyledTaskContainer = styled.div`
   border: 1px solid black;
   background-color: var(--main-dark-cyan);
-  ${tw`flex flex-row flex-wrap content-center p-2 w-full`};
+  ${tw`flex p-2 w-full`};
+  align-items: center;
+  gap: 12px;
+
+  @media (max-width: 1024px) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
 `;
 
 export const StyledCreateTaskInput = styled.input`

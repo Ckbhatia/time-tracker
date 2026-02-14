@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useQuery, useMutation, NetworkStatus } from "@apollo/client";
+import moment from "moment";
 import get from "lodash/get";
 import { MdDelete } from "react-icons/md";
 import tost from "../../utils/toast"
@@ -30,6 +31,23 @@ import {
 import Pagination from "../Pagination";
 import { DEFAULT_LIMIT, ERROR_MESSAGE, ERROR_TEXT, INFO_TEXT, SUCCESS_TEXT } from "../../constants";
 import { AuthContext } from "../../Context/AuthContext";
+
+const getRelativeDateLabel = (dateLabel) => {
+  const parsed = moment(dateLabel, "ll", true);
+  if (!parsed.isValid()) {
+    return dateLabel;
+  }
+
+  if (parsed.isSame(moment(), "day")) {
+    return "Today";
+  }
+
+  if (parsed.isSame(moment().subtract(1, "day"), "day")) {
+    return "Yesterday";
+  }
+
+  return dateLabel;
+};
 
 const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
   const [editTaskInfo, setEditTaskInfo] = useState();
@@ -258,7 +276,7 @@ const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
             return (
               <StyledListContainer key={date}>
                 <StyledHeaderContainer>
-                  <StyledDateTime>{date}</StyledDateTime>
+                  <StyledDateTime>{getRelativeDateLabel(date)}</StyledDateTime>
                   <StyledTotalTimeContainer>
                     <span>Total:</span>
                     <span>
@@ -293,16 +311,16 @@ const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
                               onChange={(e) => handleChange(e, task?.id)}
                             />
                           </StyledTaskInputContainer>
-                          <StyledTagContainer>
+                        </StyledTaskMainInfoContainer>
+                        <StyledExtraInfoContainer>
+                          <StyledTagContainer className="task-meta-item">
                             <Tag
                               updateTagId={() => { }}
                               currentTag={task?.tag_id}
                               submitTaskTagData={submitTaskTagData}
                             />
                           </StyledTagContainer>
-                        </StyledTaskMainInfoContainer>
-                        <StyledExtraInfoContainer>
-                          <StyledTimeContainer className="task-timer-container">
+                          <StyledTimeContainer className="task-meta-item task-timer-container">
                             <span className="start-time">
                               {SimplifyTime(task.start_time)}
                             </span>
@@ -310,10 +328,10 @@ const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
                               {SimplifyTime(task.end_time)}
                             </span>
                           </StyledTimeContainer>
-                          <StyledTimeDifferenceContainer>
+                          <StyledTimeDifferenceContainer className="task-meta-item">
                             {hrs}:{mins}:{secs}
                           </StyledTimeDifferenceContainer>
-                          <StyledButtonContainer>
+                          <StyledButtonContainer className="task-meta-item">
                             <button onClick={() => submitTaskData(task.id)}>
                               <MdDelete />
                             </button>
