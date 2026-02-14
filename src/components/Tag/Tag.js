@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { NetworkStatus, useMutation, useQuery } from "@apollo/client";
+import React, { useEffect, useState } from "react";
+import { useMutation, useQuery } from "@apollo/client";
 import { MdDelete } from "react-icons/md";
+import { FiTag } from "react-icons/fi";
 import Modal from "../Modal";
 import TagModal from "../TagModal";
 import { StyledMainTagContainer } from "./Styled";
@@ -15,16 +16,24 @@ import {
 import { getTagValue } from "../../utils/tag";
 import tost from "../../utils/toast";
 
-const Tag = ({ updateTagId, currentTag, submitTaskTagData }) => {
+const Tag = ({
+  updateTagId,
+  currentTag,
+  submitTaskTagData,
+  placeholder,
+  compactWhenEmpty = false,
+  flatTrigger = false,
+}) => {
   const [open, setOpen] = useState(false);
   const [isTagSelectOpen, setTagSelectOpen] = useState(false);
 
   const { userInfo } = React.useContext(AuthContext);
+  const userId = userInfo?.userId;
 
-  const { loading, error, data, refetch, networkStatus } = useQuery(GetTags, {
-    notifyOnNetworkStatusChange: true,
+  const { loading, error, data, refetch } = useQuery(GetTags, {
+    skip: !userId,
     variables: {
-      author_id: userInfo?.userId,
+      author_id: userId,
     },
   });
 
@@ -32,9 +41,16 @@ const Tag = ({ updateTagId, currentTag, submitTaskTagData }) => {
     getTagValue(data, currentTag)
   );
 
-  if (networkStatus === NetworkStatus.loading && data) {
-    setSelectedTag(getTagValue(data, currentTag));
-  }
+  useEffect(() => {
+    if (!data) {
+      if (!currentTag) {
+        setSelectedTag("");
+      }
+      return;
+    }
+
+    setSelectedTag(getTagValue(data, currentTag) || "");
+  }, [currentTag, data]);
 
   const [
     deleteATaskTag,
@@ -104,11 +120,22 @@ const Tag = ({ updateTagId, currentTag, submitTaskTagData }) => {
     resetDeleteOneTag();
   }
 
+  const isEmptySelection = !selectedTag;
+
   return (
     <StyledMainTagContainer>
       <div className="create-tag-container">
-        <span className="tag-select-text" onClick={handleTagOpen}>
-          {selectedTag || "Select a tag"}
+        <span
+          className={`tag-select-text${
+            compactWhenEmpty && isEmptySelection ? " tag-select-empty" : ""
+          }${flatTrigger ? " tag-select-flat" : ""}`}
+          onClick={handleTagOpen}
+        >
+          {compactWhenEmpty && isEmptySelection ? (
+            <FiTag className="tag-select-icon" aria-label="Select tag" />
+          ) : (
+            selectedTag || placeholder || "Select a tag"
+          )}
         </span>
       </div>
       {isTagSelectOpen && (

@@ -8,7 +8,7 @@ const tost = (
   type,
   description,
   duration = DEFAULT_TOAST_DURATION,
-  position = "top-right",
+  position = "bottom-right",
 ) => {
   if (!descriptionQueue.includes(description)) {
     toast[type](description, {

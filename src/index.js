@@ -11,7 +11,7 @@ ReactDOM.render(
   <React.StrictMode>
       <GlobalStyles />
       <App />
-      <ToastContainer />
+      <ToastContainer position="bottom-right" />
   </React.StrictMode>,
   document.getElementById("root")
 );

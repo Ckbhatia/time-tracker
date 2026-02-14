@@ -45,6 +45,7 @@ const TagForm = ({ refetch, handleSave }) => {
 
   const [inputValue, updateInputValue] = useState("");
   const { userInfo } = React.useContext(AuthContext);
+  const userId = userInfo?.userId;
 
   const [createATag, { data, loading, reset }] = useMutation(
     createOneTag,
@@ -74,11 +75,16 @@ const TagForm = ({ refetch, handleSave }) => {
   const submitTagData = async (e) => {
     e.preventDefault();
 
+    if (!userId) {
+      tost(ERROR_TEXT, "User information is unavailable");
+      return;
+    }
+
     if (inputValue && inputValue?.trim()) {
       await createATag({
         variables: {
           title: inputValue?.trim(),
-          author_id: userInfo?.userId,
+          author_id: userId,
         },
       });
 

@@ -17,16 +17,16 @@ function App() {
     getIsAuthenticated()
   );
   const [hasError, setHasError] = React.useState(false);
-  const [userInfo, setUserInfo] = React.useState(async () =>
-    isAuthenticated ? await getUserInfo() : null
+  const [userInfo, setUserInfo] = React.useState(() =>
+    isAuthenticated ? getUserInfo() : null
   );
 
   React.useEffect(() => {
     if (isAuthenticated) {
-      (async () => {
-        const userInfo = await getUserInfo();
-        setUserInfo(userInfo);
-      })();
+      const currentUserInfo = getUserInfo();
+      setUserInfo(currentUserInfo);
+    } else {
+      setUserInfo(null);
     }
   }, [isAuthenticated, setUserInfo]);
 
