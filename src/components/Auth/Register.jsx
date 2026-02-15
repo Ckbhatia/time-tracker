@@ -41,16 +41,18 @@ const Register = () => {
     reset()
   }
 
+  const { name, username, email, password } = formData;
+
   React.useEffect(() => {
     if (data) {
       const token = data?.signup?.token;
       const userId = data?.signup?.id;
       if(token) {
-        saveInfo(USER_INFO_TEXT, {token, userId});
+        saveInfo(USER_INFO_TEXT, { token, userId, name, username, email });
         navigate(routes.tracker)
       }
     }
-  }, [data, navigate]);
+  }, [data, email, name, navigate, username]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -69,8 +71,6 @@ const Register = () => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
-
-  const { name, username, email, password } = formData;
 
   const isEmpty = !name || !username || !email || !password;
 

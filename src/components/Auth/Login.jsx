@@ -38,18 +38,18 @@ const Login = () => {
     reset()
   }
 
+  const { email, password } = formData;
+
   React.useEffect(() => {
     if (data) {
       const token = data?.login?.token;
       const userId = data?.login?.id;
       if(token) {
-        saveInfo(USER_INFO_TEXT, {token, userId});
+        saveInfo(USER_INFO_TEXT, { token, userId, email, name: email.split("@")[0] });
         navigate(routes.tracker)
       }
     }
-  }, [data, navigate]);
-
-  const { email, password } = formData;
+  }, [data, email, navigate]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
