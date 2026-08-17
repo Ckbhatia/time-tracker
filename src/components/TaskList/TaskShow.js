@@ -63,7 +63,6 @@ const TaskShow = ({ shouldRefetch, udpateShouldRefetch }) => {
     variables: {
       limit: DEFAULT_LIMIT,
       offset,
-      author_id: userId,
     },
   });
 

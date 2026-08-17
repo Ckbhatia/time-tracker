@@ -84,7 +84,6 @@ const TagForm = ({ refetch, handleSave }) => {
       await createATag({
         variables: {
           title: inputValue?.trim(),
-          author_id: userId,
         },
       });
 

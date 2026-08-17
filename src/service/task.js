@@ -1,13 +1,13 @@
 import { gql } from '@apollo/client';
 
 export const GetTasks = gql`
-	query ($limit: Int!, $offset: Int!, $author_id: Int!) {
-		time_tracker_tasks_aggregate(where: {author_id: {_eq: $author_id}, end_time: {_is_null: false}}) {
+	query ($limit: Int!, $offset: Int!) {
+		time_tracker_tasks_aggregate(where: {end_time: {_is_null: false}}) {
 			aggregate {
 				count: count(columns: id)
 			}
 		}
-		time_tracker_tasks(where: {author_id: {_eq: $author_id}, end_time: {_is_null: false}}, limit: $limit, offset: $offset, order_by: {start_time: desc}) {
+		time_tracker_tasks(where: {end_time: {_is_null: false}}, limit: $limit, offset: $offset, order_by: {start_time: desc}) {
 			title
 			id
 			created_at
@@ -20,9 +20,9 @@ export const GetTasks = gql`
 `;
 
 export const GetActiveDraftTask = gql`
-	query ($author_id: Int!) {
+	query {
 		time_tracker_tasks(
-			where: {author_id: {_eq: $author_id}, end_time: {_is_null: true}}
+			where: {end_time: {_is_null: true}}
 			limit: 1
 			order_by: {start_time: desc}
 		) {
@@ -40,7 +40,6 @@ export const createOneTask = gql`
     $start_time: timestamptz!
     $end_time: timestamptz
     $tag_id: Int
-    $author_id: Int!
   ) {
     insert_time_tracker_tasks_one(
       object: {
@@ -48,7 +47,6 @@ export const createOneTask = gql`
         start_time: $start_time
         end_time: $end_time
         tag_id: $tag_id
-        author_id: $author_id
       }
       ) {
         title
