@@ -1,9 +1,8 @@
 import { gql } from "@apollo/client";
 
 export const GetTags = gql`
-  query($author_id: Int!) {
+  query {
     time_tracker_tags(
-      where: { author_id: { _eq: $author_id } }
       order_by: { created_at: desc }
     ) {
       id
@@ -13,9 +12,9 @@ export const GetTags = gql`
 `;
 
 export const createOneTag = gql`
-  mutation($title: String!, $author_id: Int!) {
+  mutation($title: String!) {
     insert_time_tracker_tags_one(
-      object: { title: $title, author_id: $author_id }
+      object: { title: $title }
     ) {
       id
       title

@@ -30,9 +30,8 @@ const formatTimer = (secondsCount) => {
   const minutes = Math.floor(total / 60) % 60;
   const hours = Math.floor(total / 3600);
 
-  return `${hours < 10 ? `0${hours}` : hours}:${
-    minutes < 10 ? `0${minutes}` : minutes
-  }:${seconds < 10 ? `0${seconds}` : seconds}`;
+  return `${hours < 10 ? `0${hours}` : hours}:${minutes < 10 ? `0${minutes}` : minutes
+    }:${seconds < 10 ? `0${seconds}` : seconds}`;
 };
 
 const getLocalDateValue = () => moment().format("YYYY-MM-DD");
@@ -213,9 +212,6 @@ const CreateTask = ({ udpateShouldRefetch }) => {
   useQuery(GetActiveDraftTask, {
     skip: !userId,
     fetchPolicy: "network-only",
-    variables: {
-      author_id: userId,
-    },
     onCompleted: (queryData) => {
       const draft = queryData?.time_tracker_tasks?.[0];
       if (!draft?.id || !draft?.start_time) {
@@ -271,7 +267,7 @@ const CreateTask = ({ udpateShouldRefetch }) => {
           title: syncTitle,
           tag_id: syncTagId,
         };
-      } catch (_) {}
+      } catch (_) { }
     }, 400);
   }, [
     clearDraftSyncTimeout,
@@ -301,7 +297,6 @@ const CreateTask = ({ udpateShouldRefetch }) => {
         start_time: startTime,
         end_time: null,
         tag_id: null,
-        author_id: userId,
       },
     });
   }, [
@@ -447,7 +442,6 @@ const CreateTask = ({ udpateShouldRefetch }) => {
         start_time: startLocal.utc().format(),
         end_time: endLocal.utc().format(),
         tag_id: tagId,
-        author_id: userId,
       },
     });
   }, [
@@ -526,9 +520,8 @@ const CreateTask = ({ udpateShouldRefetch }) => {
                   <span className="timer">{timer}</span>
                 </div>
                 <button
-                  className={`primary-action-button${
-                    isTimerRunning ? " stop-action-button" : ""
-                  }`}
+                  className={`primary-action-button${isTimerRunning ? " stop-action-button" : ""
+                    }`}
                   onClick={handlePrimaryAction}
                   disabled={isActionDisabled}
                   type="button"

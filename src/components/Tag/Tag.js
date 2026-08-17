@@ -32,9 +32,6 @@ const Tag = ({
 
   const { loading, error, data, refetch } = useQuery(GetTags, {
     skip: !userId,
-    variables: {
-      author_id: userId,
-    },
   });
 
   const [selectedTag, setSelectedTag] = useState(() =>
@@ -126,9 +123,8 @@ const Tag = ({
     <StyledMainTagContainer>
       <div className="create-tag-container">
         <span
-          className={`tag-select-text${
-            compactWhenEmpty && isEmptySelection ? " tag-select-empty" : ""
-          }${flatTrigger ? " tag-select-flat" : ""}`}
+          className={`tag-select-text${compactWhenEmpty && isEmptySelection ? " tag-select-empty" : ""
+            }${flatTrigger ? " tag-select-flat" : ""}`}
           onClick={handleTagOpen}
         >
           {compactWhenEmpty && isEmptySelection ? (
